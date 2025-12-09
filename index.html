@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNUF: Five Nights at Ultimate Fear</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Menu główne -->
+        <div id="menu" class="screen active">
+            <div class="menu-content">
+                <h1 id="title">FNUF</h1>
+                <h2 id="subtitle">Five Nights at Ultimate Fear</h2>
+                <div class="menu-buttons">
+                    <button class="menu-btn" id="new-game-btn">
+                        <i class="fas fa-play"></i> NOWA GRA
+                    </button>
+                    <button class="menu-btn" id="continue-btn">
+                        <i class="fas fa-redo"></i> KONTYNUUJ
+                    </button>
+                    <button class="menu-btn" id="story-btn">
+                        <i class="fas fa-book"></i> HISTORIA
+                    </button>
+                    <button class="menu-btn" id="mini-game-btn">
+                        <i class="fas fa-gamepad"></i> MINIGRY
+                    </button>
+                    <button class="menu-btn" id="settings-btn">
+                        <i class="fas fa-cog"></i> USTAWIENIA
+                    </button>
+                </div>
+                
+                <div id="night-select" class="night-select">
+                    <div class="night-select-title">Wybierz noc:</div>
+                    <div class="night-buttons">
+                        <button class="night-btn" data-night="1">Noc 1</button>
+                        <button class="night-btn" data-night="2">Noc 2</button>
+                        <button class="night-btn" data-night="3">Noc 3</button>
+                        <button class="night-btn" data-night="4">Noc 4</button>
+                        <button class="night-btn" data-night="5">Noc 5</button>
+                    </div>
+                    <button class="back-btn" id="night-select-back">
+                        <i class="fas fa-arrow-left"></i> POWRÓT
+                    </button>
+                </div>
+            </div>
+            
+            <div class="menu-footer">
+                <div class="hint">Używaj klawiszy: C (kamery), Q/E (światła), L/R (drzwi), Spacji (dźwięk)</div>
+                <div class="version">FNUF v1.0 | © 2023 Ultimate Fear Games</div>
+            </div>
+        </div>
+        
+        <!-- Ekran historii -->
+        <div id="story-screen" class="screen">
+            <div class="story-content">
+                <div class="story-header">
+                    <h2><i class="fas fa-scroll"></i> HISTORIA FNUF</h2>
+                    <button class="close-btn" id="close-story">
+                        <i class="fas fa-times"></i> ZAMKNIJ
+                    </button>
+                </div>
+                
+                <div class="story-text">
+                    <div class="story-section">
+                        <h3>WPROWADZENIE</h3>
+                        <p>Witaj w <span class="highlight">Ultimate Fear Entertainment Complex</span>, miejscu, które miało przynieść radość dzieciom, ale stało się koszmarem dla pracowników nocnej zmiany.</p>
+                        <p>W 1993 roku, założyciel kompleksu, <span class="highlight">Henry Blackburn</span>, stworzył serię zaawansowanych animatroników, które miały bawić gości w ciągu dnia. Niestety, seria tajemniczych wypadków doprowadziła do śmierci kilku osób, a ich dusze rzekomo miały zawładnąć maszynami.</p>
+                    </div>
+                    
+                    <div class="story-section">
+                        <h3>TWÓJ CEL</h3>
+                        <p>Jako nowy pracownik ochrony, musisz przetrwać pięć nocy w tym miejscu, pilnując, aby animatroniki nie dostały się do twojego biura. Użyj kamer, drzwi i świateł, aby monitorować ich ruchy i przetrwać do 6 rano.</p>
+                        <p><span class="warning">UWAŻAJ:</span> Animatroniki stają się coraz bardziej agresywne z każdą nocą. Niektóre z nich mają specjalne zdolności, które utrudnią ci przeżycie.</p>
+                    </div>
+                    
+                    <div class="story-section">
+                        <h3>ANIMATRONIKI</h3>
+                        <div class="animatronic-list">
+                            <div class="animatronic-item">
+                                <div class="animatronic-icon">⚡</div>
+                                <div class="animatronic-info">
+                                    <h4>BOLT BEAR</h4>
+                                    <p>Główny animatronik, porusza się głównie przez główne korytarze.</p>
+                                </div>
+                            </div>
+                            <div class="animatronic-item">
+                                <div class="animatronic-icon">🦊</div>
+                                <div class="animatronic-info">
+                                    <h4>SPARKY FOX</h4>
+                                    <p>Szybki i przebiegły, często pojawia się w wentylacji.</p>
+                                </div>
+                            </div>
+                            <div class="animatronic-item">
+                                <div class="animatronic-icon">🐤</div>
+                                <div class="animatronic-info">
+                                    <h4>CHICA CHICK</h4>
+                                    <p>Pozostaje w kuchni, ale gdy się zbliży, będziesz słyszeć dźwięk brzęczących sztućców.</p>
+                                </div>
+                            </div>
+                            <div class="animatronic-item">
+                                <div class="animatronic-icon">🏴‍☠️</div>
+                                <div class="animatronic-info">
+                                    <h4>FANG THE PIRATE</h4>
+                                    <p>Ma własną trasę przez magazyn i prawy korytarz.</p>
+                                </div>
+                            </div>
+                            <div class="animatronic-item">
+                                <div class="animatronic-icon">🌟</div>
+                                <div class="animatronic-info">
+                                    <h4>GOLDEN BOLT</h4>
+                                    <p>Rzadko się pojawia, ale gdy to zrobi, oznacza to prawie pewną śmierć.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="story-section">
+                        <h3>PORADY</h3>
+                        <ul class="tips-list">
+                            <li><i class="fas fa-bolt"></i> Zarządzaj energią rozsądnie - każde urządzenie zużywa prąd</li>
+                            <li><i class="fas fa-door-closed"></i> Zamykaj drzwi tylko gdy jest to konieczne</li>
+                            <li><i class="fas fa-video"></i> Regularnie sprawdzaj kamery, aby śledzić ruchy animatroników</li>
+                            <li><i class="fas fa-volume-up"></i> Użyj dźwięku odstraszającego w nagłych przypadkach</li>
+                            <li><i class="fas fa-clock"></i> Każda noc trwa od 12:00 AM do 6:00 AM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ekran minigry -->
+        <div id="mini-game-screen" class="screen">
+            <div class="mini-game-header">
+                <h2><i class="fas fa-gamepad"></i> MINIGRA: UCIECZKA ANIMATRONIKÓW</h2>
+                <button class="close-btn" id="mini-game-back">
+                    <i class="fas fa-arrow-left"></i> POWRÓT
+                </button>
+            </div>
+            
+            <div class="mini-game-content">
+                <div class="mini-game-stats">
+                    <div class="mini-game-stat">
+                        <span class="stat-label">WYNIK:</span>
+                        <span class="stat-value" id="mini-game-score">0</span>
+                    </div>
+                    <div class="mini-game-stat">
+                        <span class="stat-label">ŻYCIA:</span>
+                        <span class="stat-value" id="mini-game-lives">3</span>
+                    </div>
+                    <div class="mini-game-stat">
+                        <span class="stat-label">POZIOM:</span>
+                        <span class="stat-value" id="mini-game-level">1</span>
+                    </div>
+                </div>
+                
+                <canvas id="mini-game-canvas" width="800" height="500"></canvas>
+                
+                <div class="mini-game-controls">
+                    <div class="controls-info">
+                        <p><i class="fas fa-arrow-left"></i> <i class="fas fa-arrow-right"></i> - PORUSZANIE</p>
+                        <p><i class="fas fa-space-shuttle"></i> - ODSTASZANIE (SPACJA)</p>
+                    </div>
+                    <button class="game-btn" id="mini-game-start">
+                        <i class="fas fa-play"></i> ROZPOCZNIJ GRĘ
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ekran ustawień -->
+        <div id="settings-screen" class="screen">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2><i class="fas fa-cog"></i> USTAWIENIA</h2>
+                    <button class="close-btn" id="settings-back">
+                        <i class="fas fa-arrow-left"></i> POWRÓT
+                    </button>
+                </div>
+                
+                <div class="settings-options">
+                    <div class="setting-group">
+                        <h3><i class="fas fa-volume-up"></i> DŹWIĘK</h3>
+                        <div class="setting-option">
+                            <label for="sound-volume">GŁOŚNOŚĆ:</label>
+                            <input type="range" id="sound-volume" min="0" max="100" value="70">
+                            <span id="volume-value">70%</span>
+                        </div>
+                        <div class="setting-option">
+                            <label for="sound-effects">EFEKTY DŹWIĘKOWE:</label>
+                            <input type="checkbox" id="sound-effects" checked>
+                        </div>
+                        <div class="setting-option">
+                            <label for="background-music">MUZYKA W TLE:</label>
+                            <input type="checkbox" id="background-music" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h3><i class="fas fa-keyboard"></i> STEROWANIE</h3>
+                        <div class="setting-option">
+                            <label>STEROWANIE KLAWIATURĄ:</label>
+                            <div class="key-controls">
+                                <div class="key-row">
+                                    <span class="key">C</span>
+                                    <span class="key-desc">KAMERY</span>
+                                </div>
+                                <div class="key-row">
+                                    <span class="key">Q/E</span>
+                                    <span class="key-desc">ŚWIATŁA</span>
+                                </div>
+                                <div class="key-row">
+                                    <span class="key">L/R</span>
+                                    <span class="key-desc">DRZWI</span>
+                                </div>
+                                <div class="key-row">
+                                    <span class="key">SPACJA</span>
+                                    <span class="key-desc">DŹWIĘK</span>
+                                </div>
+                                <div class="key-row">
+                                    <span class="key">P</span>
+                                    <span class="key-desc">PAUZA</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h3><i class="fas fa-palette"></i> WYGLĄD</h3>
+                        <div class="setting-option">
+                            <label for="theme-select">MOTYW KOLORYSTYCZNY:</label>
+                            <select id="theme-select">
+                                <option value="green" selected>ZIELONY (DOMYŚLNY)</option>
+                                <option value="blue">NIEBIESKI</option>
+                                <option value="red">CZERWONY</option>
+                                <option value="purple">FIOLETOWY</option>
+                            </select>
+                        </div>
+                        <div class="setting-option">
+                            <label for="screen-shake">EFEKTY WSTRZĄSU:</label>
+                            <input type="checkbox" id="screen-shake" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h3><i class="fas fa-database"></i> DANE</h3>
+                        <div class="setting-option">
+                            <button class="game-btn" id="save-settings">
+                                <i class="fas fa-save"></i> ZAPISZ USTAWIENIA
+                            </button>
+                            <button class="game-btn" id="reset-progress">
+                                <i class="fas fa-trash"></i> RESETUJ POSTĘP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ekran gry -->
+        <div id="game-screen" class="screen">
+            <!-- Monitor kamer -->
+            <div id="monitor"></div>
+            
+            <!-- Widok biura -->
+            <div id="office">
+                <div id="office-items">
+                    <div class="office-item" id="poster" title="Plakat (kliknij dla easter egga)">
+                        <div class="item-content">PLAKAT<br>REKLAMOWY</div>
+                    </div>
+                    <div class="office-item" id="fan" title="Wentylator">
+                        <div class="fan-blades">
+                            <div class="blade"></div>
+                            <div class="blade"></div>
+                            <div class="blade"></div>
+                        </div>
+                    </div>
+                    <div class="office-item" id="cup" title="Kubek (kliknij dla easter egga)">
+                        <div class="cup-content">KAWA</div>
+                    </div>
+                    <div class="office-item" id="calendar" title="Kalendarz">
+                        <div class="calendar-content">NOC <span id="calendar-night">1</span></div>
+                    </div>
+                </div>
+                
+                <!-- Drzwi -->
+                <div class="door" id="left-door">
+                    <div class="door-panel"></div>
+                    <div class="door-frame"></div>
+                </div>
+                <div class="door" id="right-door">
+                    <div class="door-panel"></div>
+                    <div class="door-frame"></div>
+                </div>
+                
+                <!-- Przyciski do drzwi -->
+                <div class="door-button" id="left-door-button" title="Lewe drzwi (L)">
+                    <div class="button-light"></div>
+                    <div class="button-label">LEWE</div>
+                </div>
+                <div class="door-button" id="right-door-button" title="Prawe drzwi (R)">
+                    <div class="button-light"></div>
+                    <div class="button-label">PRAWE</div>
+                </div>
+                
+                <!-- Animatroniki w biurze -->
+                <div class="animatronic" id="bolt-bear-office">
+                    <div class="animatronic-name">BOLT BEAR</div>
+                    <div class="animatronic-icon-large">⚡</div>
+                </div>
+                <div class="animatronic" id="sparky-fox-office">
+                    <div class="animatronic-name">SPARKY FOX</div>
+                    <div class="animatronic-icon-large">🦊</div>
+                </div>
+                
+                <!-- Dzwonek do odstraszania -->
+                <div id="buzzer" title="Dźwięk odstraszający (Spacja)">
+                    <div class="buzzer-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="buzzer-label">DŹWIĘK</div>
+                </div>
+                
+                <!-- Zegar -->
+                <div id="clock">
+                    <div class="clock-time">12:00 AM</div>
+                    <div class="clock-date">NOC 1</div>
+                </div>
+                
+                <!-- Ostrzeżenie o braku zasilania -->
+                <div id="power-warning">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="warning-text">
+                        <div class="warning-title">BRAK ZASILANIA</div>
+                        <div class="warning-subtitle">Systemy awaryjne włączą się za chwilę...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Widok kamer -->
+            <div id="camera-view">
+                <div id="camera-feed">
+                    <div class="camera-header">
+                        <div class="camera-title">KAMERA 1: SCENA GŁÓWNA</div>
+                        <div class="camera-time">--:-- --</div>
+                    </div>
+                    <div class="camera-content">
+                        <div class="camera-static"></div>
+                        <div class="camera-image"></div>
+                        <div class="camera-status">
+                            <div class="status-item">
+                                <span class="status-label">LOKALIZACJA:</span>
+                                <span class="status-value">SCENA GŁÓWNA</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">STATUS:</span>
+                                <span class="status-value active">AKTYWNA</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">ANIMATRONIKI:</span>
+                                <span class="status-value">0 WIDOCZNYCH</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="cameras">
+                    <div class="cameras-header">
+                        <h3><i class="fas fa-video"></i> SYSTEM KAMER</h3>
+                        <div class="cameras-count">12 KAMER</div>
+                    </div>
+                    <div class="cameras-grid">
+                        <!-- Przyciski kamer będą dodane dynamicznie -->
+                    </div>
+                    <div class="cameras-footer">
+                        <div class="camera-hint">Wybierz kamerę: 1-9 lub kliknij</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ekran jumpscare -->
+            <div id="jumpscare">
+                <div class="jumpscare-content">
+                    <div class="jumpscare-icon" id="jumpscare-icon">⚡</div>
+                    <div class="jumpscare-name" id="jumpscare-name">BOLT BEAR</div>
+                    <div class="jumpscare-text">GAME OVER</div>
+                </div>
+            </div>
+            
+            <!-- Ekran ukończenia nocy -->
+            <div id="night-complete">
+                <div class="complete-content">
+                    <div class="complete-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 class="complete-title">NOC <span id="completed-night">1</span> UKOŃCZONA!</h2>
+                    <p class="complete-text">Przetrwałeś do 6:00 rano!</p>
+                    
+                    <div class="complete-stats">
+                        <div class="complete-stat">
+                            <div class="stat-label">ZAROBKI:</div>
+                            <div class="stat-value">$<span id="night-pay">120.50</span></div>
+                        </div>
+                        <div class="complete-stat">
+                            <div class="stat-label">POZOSTAŁA ENERGIA:</div>
+                            <div class="stat-value"><span id="night-power">50</span>%</div>
+                        </div>
+                        <div class="complete-stat">
+                            <div class="stat-label">CAŁKOWITY ZAROBEK:</div>
+                            <div class="stat-value">$<span id="total-money">120.50</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="complete-buttons">
+                        <button class="menu-btn" id="next-night-btn">
+                            <i class="fas fa-moon"></i> NASTĘPNA NOC
+                        </button>
+                        <button class="menu-btn" id="night-complete-menu">
+                            <i class="fas fa-home"></i> MENU GŁÓWNE
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- HUD -->
+            <div id="hud">
+                <div class="hud-top">
+                    <div class="hud-stats">
+                        <div class="hud-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">ZASILANIE</div>
+                                <div class="stat-value" id="hud-power">100%</div>
+                            </div>
+                        </div>
+                        <div class="hud-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">GODZINA</div>
+                                <div class="stat-value" id="hud-time">12:00 AM</div>
+                            </div>
+                        </div>
+                        <div class="hud-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">NOC</div>
+                                <div class="stat-value" id="hud-night">1</div>
+                            </div>
+                        </div>
+                        <div class="hud-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">AKTYWNE</div>
+                                <div class="stat-value" id="hud-active">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hud-controls">
+                        <button class="hud-btn" id="cameras-btn" title="Kamery (C)">
+                            <i class="fas fa-video"></i>
+                            <span class="btn-label">KAMERY</span>
+                        </button>
+                        <button class="hud-btn" id="lights-left-btn" title="Światło lewe (Q)">
+                            <i class="fas fa-lightbulb"></i>
+                            <span class="btn-label">ŚWIATŁO L</span>
+                        </button>
+                        <button class="hud-btn" id="lights-right-btn" title="Światło prawe (E)">
+                            <i class="fas fa-lightbulb"></i>
+                            <span class="btn-label">ŚWIATŁO P</span>
+                        </button>
+                        <button class="hud-btn" id="map-btn" title="Mapa (M)">
+                            <i class="fas fa-map"></i>
+                            <span class="btn-label">MAPA</span>
+                        </button>
+                        <button class="hud-btn" id="pause-btn" title="Pauza (P)">
+                            <i class="fas fa-pause"></i>
+                            <span class="btn-label">PAUZA</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hud-bottom">
+                    <div class="door-status">
+                        <div class="door-status-item">
+                            <div class="door-label">DRZWI LEWE</div>
+                            <div class="door-value" id="left-door-status">OTWARTE</div>
+                        </div>
+                        <div class="door-status-item">
+                            <div class="door-label">DRZWI PRAWE</div>
+                            <div class="door-value" id="right-door-status">OTWARTE</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hud-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="hint-text">Używaj klawiszy C (kamery), Q/E (światła), L/R (drzwi), Spacji (dźwięk)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
