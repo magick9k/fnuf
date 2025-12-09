@@ -1,10 +1,13 @@
-// GŁÓWNY KOD GRY FNUF
-// ===================
+// FNUF ULTIMATE FEAR COLLECTION - GŁÓWNY KOD
+// ==========================================
 
-// GLOBALNE ZMIENNE
-// ----------------
-let gameState = {
-    // Podstawowe ustawienia
+// GLOBALNE ZMIENNE I KONFIGURACJA
+// ================================
+
+// Stan gry
+const GameState = {
+    // Podstawowe
+    currentVersion: 1, // 1, 2 lub 3
     currentNight: 1,
     currentHour: 12,
     currentMinute: 0,
@@ -29,619 +32,887 @@ let gameState = {
     playerMoney: 0,
     gameTime: 0,
     totalNightsCompleted: 0,
+    jumpscaresSurvived: 0,
     
     // Ustawienia
-    soundVolume: 70,
-    soundEffects: true,
-    backgroundMusic: true,
-    screenShake: true,
-    theme: 'green'
-};
-
-// Animatroniki
-const animatronics = {
-    boltBear: {
-        name: "Bolt Bear",
-        location: 1,
-        aggression: 1,
-        movementPattern: [1, 2, 3, 7, 10],
-        active: true,
-        position: 1,
-        difficultyModifier: 1,
-        icon: "⚡",
-        jumpscareSound: "bear"
+    settings: {
+        audio: {
+            masterVolume: 70,
+            musicVolume: 60,
+            sfxVolume: 80,
+            animatronicVolume: 90,
+            muteJumpscares: false,
+            staticEffects: true
+        },
+        graphics: {
+            textureQuality: 'medium',
+            lightingQuality: 'medium',
+            renderQuality: 'medium',
+            filmEffects: true,
+            lensEffects: false,
+            screenShake: true
+        },
+        controls: {
+            keybinds: {
+                cameras: 'C',
+                leftDoor: 'L',
+                rightDoor: 'R',
+                leftLight: 'Q',
+                rightLight: 'E',
+                buzzer: ' ',
+                map: 'M',
+                pause: 'P'
+            },
+            minigameBinds: {
+                left: 'ArrowLeft',
+                right: 'ArrowRight',
+                shoot: ' ',
+                pause: 'Escape'
+            },
+            mouseControl: false
+        },
+        gameplay: {
+            difficulty: 'normal',
+            powerDrain: 'normal',
+            audioWarnings: true,
+            interfaceHints: true,
+            nightTimer: true,
+            autosave: 'night'
+        }
     },
-    sparkyFox: {
-        name: "Sparky Fox",
-        location: 4,
-        aggression: 0.8,
-        movementPattern: [4, 5, 6, 9, 10],
-        active: true,
-        position: 4,
-        difficultyModifier: 1,
-        icon: "🦊",
-        jumpscareSound: "fox"
-    },
-    chicaChick: {
-        name: "Chica Chick",
-        location: 8,
-        aggression: 0.7,
-        movementPattern: [8, 7, 3, 10],
-        active: true,
-        position: 8,
-        difficultyModifier: 1,
-        icon: "🐤",
-        jumpscareSound: "chica"
-    },
-    fangPirate: {
-        name: "Fang the Pirate",
-        location: 11,
-        aggression: 0.9,
-        movementPattern: [11, 10, 7, 3, 2],
-        active: true,
-        position: 11,
-        difficultyModifier: 1,
-        icon: "🏴‍☠️",
-        jumpscareSound: "pirate"
-    },
-    goldenBolt: {
-        name: "Golden Bolt",
-        location: 0,
-        aggression: 0.1,
-        movementPattern: [0, 0, 0, 0, 0],
-        active: false,
-        position: 0,
-        difficultyModifier: 3,
-        icon: "🌟",
-        jumpscareSound: "golden"
+    
+    // Postęp
+    progress: {
+        fnuf1: {
+            nightsCompleted: 0,
+            customNightBest: 0,
+            jumpscares: 0,
+            minigames: {}
+        },
+        fnuf2: {
+            nightsCompleted: 0,
+            customNightBest: 0,
+            jumpscares: 0,
+            minigames: {}
+        },
+        fnuf3: {
+            nightsCompleted: 0,
+            customNightBest: 0,
+            jumpscares: 0,
+            minigames: {}
+        }
     }
 };
 
-// Lokacje kamer
-const cameraLocations = [
-    { id: 1, name: "Scena Główna", description: "Główna scena z animatronikami" },
-    { id: 2, name: "Korytarz Główny", description: "Główny korytarz prowadzący do biura" },
-    { id: 3, name: "Korytarz Lewy", description: "Lewy korytarz przed biurem" },
-    { id: 4, name: "Kuchnia", description: "Kuchnia i jadalnia" },
-    { id: 5, name: "Pokój Zabaw", description: "Pokój zabaw dla dzieci" },
-    { id: 6, name: "Wentylacja A", description: "System wentylacji - część A" },
-    { id: 7, name: "Przed Biurem", description: "Obszar bezpośrednio przed biurem" },
-    { id: 8, name: "Magazyn", description: "Magazyn sprzętu i części zamiennych" },
-    { id: 9, name: "Wentylacja B", description: "System wentylacji - część B" },
-    { id: 10, name: "Za Biurem", description: "Tajny obszar za biurem" },
-    { id: 11, name: "Prawy Korytarz", description: "Prawy korytarz przed biurem" },
-    { id: 12, name: "Wejście", description: "Główne wejście do kompleksu" }
+// Animatroniki FNUF 1
+const AnimatronicsFNUF1 = {
+    boltBear: {
+        name: "Bolt Bear",
+        difficulty: 10,
+        movementPattern: [1, 2, 3, 7, 10],
+        aggression: 1.0,
+        position: 1,
+        active: true,
+        jumpscareTime: 2.0,
+        audioCues: ['growl1', 'growl2', 'roar'],
+        model: 'boltBear'
+    },
+    sparkyFox: {
+        name: "Sparky Fox",
+        difficulty: 8,
+        movementPattern: [4, 5, 6, 9, 10],
+        aggression: 0.9,
+        position: 4,
+        active: true,
+        jumpscareTime: 1.8,
+        audioCues: ['chatter', 'laugh', 'screech'],
+        model: 'sparkyFox'
+    },
+    chicaChick: {
+        name: "Chica Chick",
+        difficulty: 7,
+        movementPattern: [8, 7, 3, 10],
+        aggression: 0.8,
+        position: 8,
+        active: true,
+        jumpscareTime: 2.2,
+        audioCues: ['cluck', 'squawk', 'screech'],
+        model: 'chicaChick'
+    },
+    fangPirate: {
+        name: "Fang the Pirate",
+        difficulty: 9,
+        movementPattern: [11, 10, 7, 3, 2],
+        aggression: 0.95,
+        position: 11,
+        active: true,
+        jumpscareTime: 2.5,
+        audioCues: ['laugh', 'growl', 'roar'],
+        model: 'fangPirate'
+    },
+    goldenBolt: {
+        name: "Golden Bolt",
+        difficulty: 20,
+        movementPattern: [0, 0, 0, 0, 0],
+        aggression: 0.1,
+        position: 0,
+        active: false,
+        jumpscareTime: 3.0,
+        audioCues: ['static', 'whisper', 'scream'],
+        model: 'goldenBolt'
+    }
+};
+
+// Lokacje kamer FNUF 1
+const CameraLocationsFNUF1 = [
+    { id: 1, name: "Scena Główna", description: "Główna scena z animatronikami", hasPoster: true },
+    { id: 2, name: "Korytarz Główny", description: "Główny korytarz prowadzący do biura", hasLight: true },
+    { id: 3, name: "Korytarz Lewy", description: "Lewy korytarz przed biurem", nearLeftDoor: true },
+    { id: 4, name: "Kuchnia", description: "Kuchnia i jadalnia", hasUtensils: true },
+    { id: 5, name: "Pokój Zabaw", description: "Pokój zabaw dla dzieci", hasToys: true },
+    { id: 6, name: "Wentylacja A", description: "System wentylacji - część A", isVent: true },
+    { id: 7, name: "Przed Biurem", description: "Obszar bezpośrednio przed biurem", critical: true },
+    { id: 8, name: "Magazyn", description: "Magazyn sprzętu i części zamiennych", hasBoxes: true },
+    { id: 9, name: "Wentylacja B", description: "System wentylacji - część B", isVent: true },
+    { id: 10, name: "Za Biurem", description: "Tajny obszar za biurem", hidden: true },
+    { id: 11, name: "Prawy Korytarz", description: "Prawy korytarz przed biurem", nearRightDoor: true },
+    { id: 12, name: "Wejście", description: "Główne wejście do kompleksu", hasDoor: true }
 ];
 
-// Zmienne dla minigry
-let miniGameActive = false;
-let miniGameCtx;
-let miniGamePlayer = { x: 400, y: 450, width: 40, height: 40, speed: 6 };
-let miniGameEnemies = [];
-let miniGameProjectiles = [];
-let miniGameScore = 0;
-let miniGameLives = 3;
-let miniGameLevel = 1;
-let miniGameInterval;
-let miniGameKeys = { left: false, right: false, space: false };
+// Minigry
+const Minigames = {
+    ventRepair: {
+        name: "Naprawa Wentylacji",
+        description: "Napraw system wentylacji przed atakiem animatroników",
+        controls: {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            action: ' ',
+            pause: 'Escape'
+        },
+        highScore: 0,
+        unlocked: false,
+        requiredNight: 1
+    },
+    memoryMatch: {
+        name: "Pamięć Animatroników",
+        description: "Znajdź pary animatroników zanim czas się skończy",
+        controls: {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            action: ' ',
+            pause: 'Escape'
+        },
+        highScore: 0,
+        unlocked: false,
+        requiredNight: 2
+    },
+    cameraHack: {
+        name: "Hakowanie Kamer",
+        description: "Przełączaj kamery aby śledzić uciekające animatroniki",
+        controls: {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            action: ' ',
+            pause: 'Escape'
+        },
+        highScore: 0,
+        unlocked: false,
+        requiredNight: 3
+    },
+    powerGrid: {
+        name: "Sieć Energii",
+        description: "Połącz kable aby przywrócić zasilanie",
+        controls: {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            action: ' ',
+            pause: 'Escape'
+        },
+        highScore: 0,
+        unlocked: false,
+        requiredNight: 4
+    }
+};
 
-// Timery
+// Zmienne globalne
+let gameVersion = 1;
+let activeAnimatronics = { ...AnimatronicsFNUF1 };
+let currentCamera = 1;
 let gameTimer;
 let animatronicTimer;
 let powerOutTimer;
-
-// Audio context dla dźwięków
+let nightCompletionTimer;
 let audioContext;
-let sounds = {};
+let minigameActive = false;
+let minigameType = '';
+let minigameScore = 0;
+let minigameTime = 60;
+let minigameLevel = 1;
+let minigameInterval;
+let cameraFeedInterval;
+let loadingProgress = 0;
 
-// DOM Elements
+// THREE.js zmienne
+let scene, camera, renderer, controls;
+let officeScene, animatronicModels = {};
+let minigameScene, minigameCamera, minigameRenderer;
+
+// DOM Elementy
 const screens = {
+    loading: document.getElementById('loading-screen'),
     menu: document.getElementById('menu'),
-    story: document.getElementById('story-screen'),
-    miniGame: document.getElementById('mini-game-screen'),
     settings: document.getElementById('settings-screen'),
-    game: document.getElementById('game-screen')
+    game1: document.getElementById('game-screen-fnuf1'),
+    game2: document.getElementById('game-screen-fnuf2'),
+    game3: document.getElementById('game-screen-fnuf3'),
+    minigames: document.getElementById('minigames-screen'),
+    minigameCanvas: document.getElementById('minigame-canvas-container'),
+    credits: document.getElementById('credits-screen')
 };
 
 // INICJALIZACJA GRY
-// -----------------
+// ==================
+
 function initGame() {
-    console.log("Inicjalizacja gry FNUF...");
+    console.log('=== FNUF ULTIMATE FEAR COLLECTION ===');
+    console.log('Inicjalizacja gry...');
     
-    // Ładowanie postępu
-    loadGameProgress();
-    loadSettings();
+    // Ukryj wszystkie ekrany oprócz loading
+    Object.values(screens).forEach(screen => {
+        if (screen && screen !== screens.loading) {
+            screen.classList.remove('active');
+            screen.style.display = 'none';
+        }
+    });
     
-    // Setup event listenerów
-    setupEventListeners();
-    
-    // Setup audio
-    initAudio();
-    
-    // Setup minigry
-    initMiniGameCanvas();
-    
-    // Setup kamer
-    createCameraButtons();
-    
-    // Easter eggi
-    setupEasterEggs();
-    
-    // Ustawienie motywu
-    applyTheme(gameState.theme);
-    
-    console.log("Inicjalizacja zakończona!");
+    // Rozpocznij ładowanie
+    startLoading();
 }
 
-// SETUP EVENT LISTENERÓW
-// ----------------------
-function setupEventListeners() {
-    console.log("Ustawianie event listenerów...");
+function startLoading() {
+    console.log('Rozpoczynanie ładowania zasobów...');
+    
+    // Symulacja ładowania
+    const loadingInterval = setInterval(() => {
+        loadingProgress += Math.random() * 10;
+        if (loadingProgress > 100) loadingProgress = 100;
+        
+        document.querySelector('.loading-progress').style.width = loadingProgress + '%';
+        document.querySelector('.loading-text').textContent = 
+            `Ładowanie zasobów gry... ${Math.floor(loadingProgress)}%`;
+        
+        if (loadingProgress >= 100) {
+            clearInterval(loadingInterval);
+            finishLoading();
+        }
+    }, 100);
+    
+    // Rzeczywiste ładowanie zasobów
+    loadGameData();
+    initAudio();
+    initEventListeners();
+}
+
+function finishLoading() {
+    console.log('Ładowanie zakończone!');
+    
+    // Ukryj ekran ładowania
+    screens.loading.style.display = 'none';
+    
+    // Pokaż menu główne
+    showScreen('menu');
+    
+    // Załaduj ustawienia
+    loadSettings();
+    
+    // Zaktualizuj UI
+    updateMenuUI();
+    
+    // Rozpocznij animację 3D w tle
+    startMenuAnimations();
+}
+
+function loadGameData() {
+    console.log('Ładowanie danych gry...');
+    
+    // Ładowanie postępu z localStorage
+    const savedProgress = localStorage.getItem('fnufProgress');
+    if (savedProgress) {
+        try {
+            const progress = JSON.parse(savedProgress);
+            GameState.progress = { ...GameState.progress, ...progress };
+            GameState.playerMoney = progress.playerMoney || 0;
+            GameState.totalNightsCompleted = progress.totalNightsCompleted || 0;
+            
+            console.log('Postęp gry załadowany');
+        } catch (e) {
+            console.error('Błąd ładowania postępu:', e);
+        }
+    }
+    
+    // Aktualizuj odblokowane minigry
+    updateUnlockedMinigames();
+}
+
+// SYSTEM AUDIO
+// ============
+
+function initAudio() {
+    console.log('Inicjalizacja systemu audio...');
+    
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        console.log('AudioContext utworzony');
+    } catch (e) {
+        console.error('Web Audio API nie jest wspierane:', e);
+    }
+}
+
+function playSound(soundName, options = {}) {
+    if (!audioContext || GameState.settings.audio.masterVolume === 0) return;
+    
+    const volume = GameState.settings.audio.sfxVolume / 100;
+    if (volume <= 0) return;
+    
+    try {
+        switch(soundName) {
+            case 'menuSelect':
+                playMenuSelect();
+                break;
+            case 'cameraSwitch':
+                playCameraSwitch();
+                break;
+            case 'doorClose':
+                playDoorClose();
+                break;
+            case 'lightSwitch':
+                playLightSwitch();
+                break;
+            case 'buzzer':
+                playBuzzer();
+                break;
+            case 'powerOut':
+                playPowerOut();
+                break;
+            case 'jumpscare':
+                if (!GameState.settings.audio.muteJumpscares) {
+                    playJumpscare();
+                }
+                break;
+            case 'nightComplete':
+                playNightComplete();
+                break;
+            default:
+                playBeep();
+        }
+    } catch (e) {
+        console.error('Błąd odtwarzania dźwięku:', e);
+    }
+}
+
+function playMenuSelect() {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(0.1 * GameState.settings.audio.sfxVolume / 100, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+function playCameraSwitch() {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(0.05 * GameState.settings.audio.sfxVolume / 100, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+function playDoorClose() {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(0.1 * GameState.settings.audio.sfxVolume / 100, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+    
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.3);
+}
+
+// EVENT LISTENERY
+// ===============
+
+function initEventListeners() {
+    console.log('Inicjalizacja event listenerów...');
     
     // Menu główne
     document.getElementById('new-game-btn').addEventListener('click', showNightSelect);
     document.getElementById('continue-btn').addEventListener('click', continueGame);
-    document.getElementById('story-btn').addEventListener('click', showStory);
-    document.getElementById('mini-game-btn').addEventListener('click', showMiniGame);
+    document.getElementById('extras-btn').addEventListener('click', showMinigames);
     document.getElementById('settings-btn').addEventListener('click', showSettings);
+    document.getElementById('credits-btn').addEventListener('click', showCredits);
+    
+    // Wybór wersji
+    document.querySelectorAll('.version-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const version = parseInt(this.getAttribute('data-version'));
+            selectGameVersion(version);
+        });
+    });
     
     // Wybór nocy
-    document.querySelectorAll('.night-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+    document.querySelectorAll('.night-card:not(.custom-night)').forEach(card => {
+        card.addEventListener('click', function() {
             const night = parseInt(this.getAttribute('data-night'));
             startNight(night);
         });
     });
     
     document.getElementById('night-select-back').addEventListener('click', hideNightSelect);
+    document.getElementById('custom-night-btn').addEventListener('click', toggleCustomNightPanel);
+    document.getElementById('start-custom-night').addEventListener('click', startCustomNight);
     
-    // Historia
-    document.getElementById('close-story').addEventListener('click', hideStory);
-    
-    // Minigra
-    document.getElementById('mini-game-back').addEventListener('click', hideMiniGame);
-    document.getElementById('mini-game-start').addEventListener('click', startMiniGame);
+    // Suwaki AI
+    document.querySelectorAll('.ai-slider').forEach(slider => {
+        slider.addEventListener('input', function() {
+            const value = this.value;
+            const animatronic = this.getAttribute('data-animatronic');
+            const valueSpan = this.nextElementSibling;
+            valueSpan.textContent = value;
+            
+            // Aktualizuj trudność animatronika
+            if (activeAnimatronics[animatronic]) {
+                activeAnimatronics[animatronic].difficulty = parseInt(value);
+            }
+        });
+    });
     
     // Ustawienia
     document.getElementById('settings-back').addEventListener('click', hideSettings);
-    document.getElementById('save-settings').addEventListener('click', saveSettings);
-    document.getElementById('reset-progress').addEventListener('click', resetProgress);
+    document.getElementById('apply-settings').addEventListener('click', applySettings);
+    document.getElementById('cancel-settings').addEventListener('click', hideSettings);
+    document.getElementById('reset-controls').addEventListener('click', resetControls);
+    document.getElementById('manual-save').addEventListener('click', manualSave);
+    document.getElementById('delete-save').addEventListener('click', deleteSave);
     
-    // Kontrolki ustawień
-    document.getElementById('sound-volume').addEventListener('input', function() {
-        document.getElementById('volume-value').textContent = this.value + '%';
-        gameState.soundVolume = parseInt(this.value);
-        updateAudioVolume();
+    // Zakładki ustawień
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            switchSettingsTab(tabId);
+        });
     });
     
-    document.getElementById('sound-effects').addEventListener('change', function() {
-        gameState.soundEffects = this.checked;
+    // Suwaki głośności
+    document.getElementById('master-volume').addEventListener('input', function() {
+        document.getElementById('master-volume-value').textContent = this.value + '%';
     });
     
-    document.getElementById('background-music').addEventListener('change', function() {
-        gameState.backgroundMusic = this.checked;
+    document.getElementById('music-volume').addEventListener('input', function() {
+        document.getElementById('music-volume-value').textContent = this.value + '%';
     });
     
-    document.getElementById('screen-shake').addEventListener('change', function() {
-        gameState.screenShake = this.checked;
+    document.getElementById('sfx-volume').addEventListener('input', function() {
+        document.getElementById('sfx-volume-value').textContent = this.value + '%';
     });
     
-    document.getElementById('theme-select').addEventListener('change', function() {
-        gameState.theme = this.value;
-        applyTheme(this.value);
+    document.getElementById('animatronic-volume').addEventListener('input', function() {
+        document.getElementById('animatronic-volume-value').textContent = this.value + '%';
     });
     
-    // HUD i kontrola gry
-    document.getElementById('cameras-btn').addEventListener('click', toggleCameras);
-    document.getElementById('lights-left-btn').addEventListener('click', toggleLeftLight);
-    document.getElementById('lights-right-btn').addEventListener('click', toggleRightLight);
-    document.getElementById('map-btn').addEventListener('click', showMap);
-    document.getElementById('pause-btn').addEventListener('click', togglePause);
+    // Keybinds
+    document.querySelectorAll('.keybind-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.getAttribute('data-action');
+            startKeybindChange(action, this);
+        });
+    });
     
-    // Drzwi
-    document.getElementById('left-door-button').addEventListener('click', toggleLeftDoor);
-    document.getElementById('right-door-button').addEventListener('click', toggleRightDoor);
+    // Minigry
+    document.getElementById('minigames-back').addEventListener('click', hideMinigames);
+    document.querySelectorAll('.play-minigame-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const game = this.getAttribute('data-game');
+            startMinigame(game);
+        });
+    });
     
-    // Dzwonek
-    document.getElementById('buzzer').addEventListener('click', useBuzzer);
+    document.getElementById('minigame-close').addEventListener('click', hideMinigame);
+    document.getElementById('minigame-pause').addEventListener('click', toggleMinigamePause);
     
-    // Ekran ukończenia nocy
-    document.getElementById('next-night-btn').addEventListener('click', nextNight);
-    document.getElementById('night-complete-menu').addEventListener('click', backToMenuFromComplete);
+    // Credits
+    document.getElementById('credits-back').addEventListener('click', hideCredits);
+    
+    // FNUF 2 i 3 back buttons
+    document.getElementById('fnuf2-back')?.addEventListener('click', () => showScreen('menu'));
+    document.getElementById('fnuf3-back')?.addEventListener('click', () => showScreen('menu'));
     
     // Sterowanie klawiszami
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     
-    console.log("Event listenery ustawione!");
-}
-
-// OBSŁUGA KLAWISZY
-// ----------------
-function handleKeyDown(e) {
-    const key = e.key.toUpperCase();
-    
-    // Jeśli minigra jest aktywna
-    if (miniGameActive) {
-        switch(key) {
-            case 'ARROWLEFT':
-                miniGameKeys.left = true;
-                break;
-            case 'ARROWRIGHT':
-                miniGameKeys.right = true;
-                break;
-            case ' ':
-                if (!miniGameKeys.space) {
-                    miniGameKeys.space = true;
-                    shootProjectile();
-                }
-                break;
-        }
-        return;
-    }
-    
-    // Jeśli gra jest aktywna i nie jest zapauzowana
-    if (gameState.gameActive && !gameState.gamePaused && !gameState.jumpscareActive) {
-        switch(key) {
-            case 'C':
-                toggleCameras();
-                break;
-            case 'Q':
-                toggleLeftLight();
-                break;
-            case 'E':
-                toggleRightLight();
-                break;
-            case 'L':
-                toggleLeftDoor();
-                break;
-            case 'R':
-                toggleRightDoor();
-                break;
-            case ' ':
-                useBuzzer();
-                break;
-            case 'M':
-                showMap();
-                break;
-            case 'P':
-                togglePause();
-                break;
-            case '1': case '2': case '3': case '4': case '5':
-            case '6': case '7': case '8': case '9':
-                const cameraId = parseInt(key);
-                if (cameraId <= 9 && gameState.camerasActive) {
-                    switchCamera(cameraId);
-                }
-                break;
-            case '0':
-                if (gameState.camerasActive) {
-                    switchCamera(10);
-                }
-                break;
-            case '-':
-                if (gameState.camerasActive) {
-                    switchCamera(11);
-                }
-                break;
-            case '=':
-                if (gameState.camerasActive) {
-                    switchCamera(12);
-                }
-                break;
-        }
-    }
-    
-    // Sekretne kody (easter eggi)
-    if (key === 'F') {
-        // Sprawdź sekretny kod
-        checkSecretCode();
-    }
-}
-
-function handleKeyUp(e) {
-    const key = e.key.toUpperCase();
-    
-    if (miniGameActive) {
-        switch(key) {
-            case 'ARROWLEFT':
-                miniGameKeys.left = false;
-                break;
-            case 'ARROWRIGHT':
-                miniGameKeys.right = false;
-                break;
-            case ' ':
-                miniGameKeys.space = false;
-                break;
-        }
-    }
+    console.log('Event listenery zainicjalizowane');
 }
 
 // ZARZĄDZANIE EKRANAMI
-// --------------------
+// ====================
+
 function showScreen(screenId) {
+    console.log('Przełączanie na ekran:', screenId);
+    
     // Ukryj wszystkie ekrany
     Object.values(screens).forEach(screen => {
-        screen.classList.remove('active');
-        screen.style.display = 'none';
+        if (screen) {
+            screen.classList.remove('active');
+            screen.style.display = 'none';
+        }
     });
     
     // Pokaż wybrany ekran
     const screen = screens[screenId];
     if (screen) {
         screen.classList.add('active');
-        screen.style.display = 'flex';
+        screen.style.display = 'flex' || 'block';
+        
+        // Dodatkowe akcje dla konkretnych ekranów
+        switch(screenId) {
+            case 'menu':
+                updateMenuUI();
+                startMenuAnimations();
+                break;
+            case 'game1':
+                initGameScene();
+                startGame();
+                break;
+            case 'minigames':
+                updateMinigamesUI();
+                break;
+        }
+    }
+    
+    playSound('menuSelect');
+}
+
+function selectGameVersion(version) {
+    console.log('Wybrano wersję gry:', version);
+    gameVersion = version;
+    
+    // Aktualizuj aktywne zakładki
+    document.querySelectorAll('.version-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (parseInt(tab.getAttribute('data-version')) === version) {
+            tab.classList.add('active');
+        }
+    });
+    
+    // Aktualizuj opisy
+    document.querySelectorAll('.version-description').forEach(desc => {
+        desc.classList.remove('active');
+    });
+    document.getElementById(`desc-${version}`).classList.add('active');
+    
+    // Aktualizuj kolorystykę w zależności od wersji
+    updateColorsForVersion(version);
+    
+    playSound('menuSelect');
+}
+
+function updateColorsForVersion(version) {
+    const root = document.documentElement;
+    
+    switch(version) {
+        case 1:
+            root.style.setProperty('--fnuf-primary', 'var(--fnuf1-primary)');
+            root.style.setProperty('--fnuf-secondary', 'var(--fnuf1-secondary)');
+            break;
+        case 2:
+            root.style.setProperty('--fnuf-primary', 'var(--fnuf2-primary)');
+            root.style.setProperty('--fnuf-secondary', 'var(--fnuf2-secondary)');
+            break;
+        case 3:
+            root.style.setProperty('--fnuf-primary', 'var(--fnuf3-primary)');
+            root.style.setProperty('--fnuf-secondary', 'var(--fnuf3-secondary)');
+            break;
     }
 }
 
 function showNightSelect() {
+    console.log('Pokazywanie wyboru nocy');
+    
     document.getElementById('night-select').classList.add('active');
+    document.getElementById('custom-night-panel').classList.remove('active');
+    
+    playSound('menuSelect');
 }
 
 function hideNightSelect() {
     document.getElementById('night-select').classList.remove('active');
+    playSound('menuSelect');
 }
 
-function showStory() {
-    showScreen('story');
-}
-
-function hideStory() {
-    showScreen('menu');
-}
-
-function showMiniGame() {
-    showScreen('miniGame');
-    resetMiniGame();
-}
-
-function hideMiniGame() {
-    showScreen('menu');
-    miniGameActive = false;
-    if (miniGameInterval) clearInterval(miniGameInterval);
-}
-
-function showSettings() {
-    showScreen('settings');
-    // Załaduj aktualne ustawienia do formularza
-    document.getElementById('sound-volume').value = gameState.soundVolume;
-    document.getElementById('volume-value').textContent = gameState.soundVolume + '%';
-    document.getElementById('sound-effects').checked = gameState.soundEffects;
-    document.getElementById('background-music').checked = gameState.backgroundMusic;
-    document.getElementById('screen-shake').checked = gameState.screenShake;
-    document.getElementById('theme-select').value = gameState.theme;
-}
-
-function hideSettings() {
-    showScreen('menu');
+function toggleCustomNightPanel() {
+    const panel = document.getElementById('custom-night-panel');
+    panel.classList.toggle('active');
+    playSound('menuSelect');
 }
 
 // ROZPOCZĘCIE GRY
-// ---------------
-function startNight(night) {
-    console.log(`Rozpoczynanie nocy ${night}...`);
+// ===============
+
+function startNight(night, isCustom = false) {
+    console.log(`Rozpoczynanie nocy ${night}${isCustom ? ' (własna)' : ''}`);
     
     // Reset stanu gry
     resetGameState();
     
-    // Ustaw noc
-    gameState.currentNight = night;
-    gameState.currentHour = 12;
-    gameState.currentMinute = 0;
-    gameState.gameActive = true;
+    // Ustaw parametry nocy
+    GameState.currentNight = night;
+    GameState.currentVersion = gameVersion;
+    GameState.gameActive = true;
     
     // Ustaw trudność
-    setDifficulty(night);
+    if (!isCustom) {
+        setNightDifficulty(night);
+    }
     
-    // Pokaż ekran gry
-    showScreen('game');
+    // Pokaż odpowiedni ekran gry
+    switch(gameVersion) {
+        case 1:
+            showScreen('game1');
+            break;
+        case 2:
+            showScreen('game2');
+            break;
+        case 3:
+            showScreen('game3');
+            break;
+    }
     
-    // Aktualizuj UI
-    updateUI();
+    // Rozpocznij grę
+    startGameTimers();
+    updateGameUI();
     
-    // Rozpocznij timery
-    startGameTimer();
-    startAnimatronicsAI();
+    playSound('menuSelect');
+}
+
+function startCustomNight() {
+    console.log('Rozpoczynanie własnej nocy');
     
-    // Odtwórz dźwięk rozpoczęcia
-    playSound('start');
+    // Zbierz ustawienia AI
+    const aiSettings = {};
+    document.querySelectorAll('.ai-slider').forEach(slider => {
+        const animatronic = slider.getAttribute('data-animatronic');
+        const value = parseInt(slider.value);
+        aiSettings[animatronic] = value;
+    });
     
-    // Ustaw kalendarz
-    document.getElementById('calendar-night').textContent = night;
+    // Ustaw trudność animatroników
+    Object.keys(aiSettings).forEach(key => {
+        if (activeAnimatronics[key]) {
+            activeAnimatronics[key].difficulty = aiSettings[key];
+            activeAnimatronics[key].aggression = aiSettings[key] / 20;
+        }
+    });
     
-    console.log(`Noc ${night} rozpoczęta!`);
+    // Rozpocznij noc 6 z custom ustawieniami
+    startNight(6, true);
 }
 
 function continueGame() {
-    startNight(gameState.currentNight);
+    console.log('Kontynuowanie gry');
+    
+    // Załaduj ostatni zapisany postęp
+    const lastPlayed = localStorage.getItem('fnufLastPlayed');
+    if (lastPlayed) {
+        try {
+            const data = JSON.parse(lastPlayed);
+            gameVersion = data.version || 1;
+            startNight(data.night || 1);
+        } catch (e) {
+            console.error('Błąd ładowania ostatniej gry:', e);
+            showNightSelect();
+        }
+    } else {
+        showNightSelect();
+    }
 }
 
 function resetGameState() {
-    // Reset podstawowych wartości
-    gameState.currentHour = 12;
-    gameState.currentMinute = 0;
-    gameState.power = 100;
-    gameState.isPowerOut = false;
-    gameState.gameActive = true;
-    gameState.gamePaused = false;
-    gameState.camerasActive = false;
-    gameState.leftDoorClosed = false;
-    gameState.rightDoorClosed = false;
-    gameState.leftLightOn = false;
-    gameState.rightLightOn = false;
-    gameState.buzzerActive = false;
-    gameState.jumpscareActive = false;
-    gameState.nightCompleted = false;
-    gameState.activeAnimatronics = 0;
-    gameState.gameTime = 0;
+    console.log('Resetowanie stanu gry');
+    
+    // Podstawowe wartości
+    GameState.currentHour = 12;
+    GameState.currentMinute = 0;
+    GameState.power = 100;
+    GameState.isPowerOut = false;
+    GameState.gameActive = true;
+    GameState.gamePaused = false;
+    GameState.camerasActive = false;
+    GameState.leftDoorClosed = false;
+    GameState.rightDoorClosed = false;
+    GameState.leftLightOn = false;
+    GameState.rightLightOn = false;
+    GameState.buzzerActive = false;
+    GameState.jumpscareActive = false;
+    GameState.nightCompleted = false;
+    GameState.activeAnimatronics = 0;
+    GameState.gameTime = 0;
     
     // Reset animatroników
-    for (const key in animatronics) {
-        animatronics[key].position = animatronics[key].movementPattern[0];
-    }
+    Object.keys(activeAnimatronics).forEach(key => {
+        if (activeAnimatronics[key]) {
+            activeAnimatronics[key].position = activeAnimatronics[key].movementPattern[0];
+            activeAnimatronics[key].active = true;
+        }
+    });
     
     // Reset UI
-    document.getElementById('camera-view').style.display = 'none';
-    document.getElementById('monitor').style.opacity = '0';
-    document.getElementById('power-warning').style.display = 'none';
-    document.getElementById('jumpscare').style.display = 'none';
-    document.getElementById('night-complete').style.display = 'none';
+    document.getElementById('camera-system').style.display = 'none';
+    document.getElementById('monitor-overlay').style.opacity = '0';
+    document.getElementById('power-out-warning').style.display = 'none';
+    document.getElementById('jumpscare-screen').style.display = 'none';
+    document.getElementById('night-complete-screen').style.display = 'none';
     
-    // Reset drzwi i świateł
+    // Wyłącz kamery i światła
     updateDoorButtons();
     updateLightButtons();
+    updateCameraDisplay();
 }
 
-function setDifficulty(night) {
-    // Ustaw drenaż mocy
-    gameState.powerDrain = 0.2 + (night * 0.05);
+function setNightDifficulty(night) {
+    console.log(`Ustawianie trudności dla nocy ${night}`);
+    
+    const difficultyMultiplier = 1 + (night - 1) * 0.2;
+    
+    Object.keys(activeAnimatronics).forEach(key => {
+        if (activeAnimatronics[key]) {
+            activeAnimatronics[key].aggression = Math.min(1, 
+                activeAnimatronics[key].aggression * difficultyMultiplier);
+            activeAnimatronics[key].difficulty = Math.floor(
+                activeAnimatronics[key].difficulty * difficultyMultiplier
+            );
+        }
+    });
+    
+    // Ustaw drenaż energii
+    GameState.powerDrain = 0.2 + (night - 1) * 0.05;
     
     // Aktywuj Golden Bolt od 3 nocy
-    animatronics.goldenBolt.active = night >= 3;
-    
-    // Ustaw agresywność animatroników
-    for (const key in animatronics) {
-        if (animatronics[key].active) {
-            animatronics[key].aggression = Math.min(1, 0.5 + (night * 0.1));
-            animatronics[key].difficultyModifier = 1 + (night * 0.2);
-        }
+    if (night >= 3 && activeAnimatronics.goldenBolt) {
+        activeAnimatronics.goldenBolt.active = true;
     }
 }
 
-// TIMERY GRY
-// ----------
-function startGameTimer() {
-    // Zatrzymaj istniejący timer
-    if (gameTimer) clearInterval(gameTimer);
+// SYSTEM GRY
+// ==========
+
+function startGameTimers() {
+    console.log('Uruchamianie timerów gry');
     
-    // Uruchom nowy timer
+    // Zatrzymaj istniejące timery
+    clearAllTimers();
+    
+    // Timer gry (czas i energia)
     gameTimer = setInterval(() => {
-        if (gameState.gameActive && !gameState.gamePaused && !gameState.jumpscareActive) {
-            // Aktualizuj czas
-            gameState.currentMinute += 1;
-            gameState.gameTime += 1;
-            
-            // Co minutę w grze
-            if (gameState.currentMinute >= 60) {
-                gameState.currentMinute = 0;
-                gameState.currentHour += 1;
-                
-                // Jeśli osiągnięto 6 rano
-                if (gameState.currentHour >= 6) {
-                    completeNight();
-                    return;
-                }
-            }
-            
-            // Zużycie energii
-            if (!gameState.isPowerOut) {
-                updatePower();
-            }
-            
-            // Aktualizuj UI
-            updateUI();
+        if (GameState.gameActive && !GameState.gamePaused && !GameState.jumpscareActive) {
+            updateGameTime();
+            updatePower();
+            updateGameUI();
+            checkNightCompletion();
         }
-    }, 1000); // 1 sekunda realnego czasu = 1 minuta w grze
+    }, 1000); // 1 sekunda = 1 minuta w grze
+    
+    // Timer animatroników
+    animatronicTimer = setInterval(() => {
+        if (GameState.gameActive && !GameState.gamePaused && !GameState.jumpscareActive) {
+            updateAnimatronics();
+        }
+    }, 3000); // Ruch animatroników co 3 sekundy
+}
+
+function updateGameTime() {
+    GameState.currentMinute++;
+    GameState.gameTime++;
+    
+    if (GameState.currentMinute >= 60) {
+        GameState.currentMinute = 0;
+        GameState.currentHour++;
+        
+        if (GameState.currentHour >= 24) {
+            GameState.currentHour = 0;
+        }
+    }
 }
 
 function updatePower() {
-    // Bazowe zużycie
-    let powerDrain = gameState.powerDrain;
+    if (GameState.isPowerOut) return;
+    
+    let drain = GameState.powerDrain;
     
     // Dodatkowe zużycie przez aktywne systemy
-    if (gameState.camerasActive) powerDrain += 0.5;
-    if (gameState.leftDoorClosed) powerDrain += 1;
-    if (gameState.rightDoorClosed) powerDrain += 1;
-    if (gameState.leftLightOn) powerDrain += 0.3;
-    if (gameState.rightLightOn) powerDrain += 0.3;
-    if (gameState.buzzerActive) powerDrain += 2;
+    if (GameState.camerasActive) drain += 0.5;
+    if (GameState.leftDoorClosed) drain += 1;
+    if (GameState.rightDoorClosed) drain += 1;
+    if (GameState.leftLightOn) drain += 0.3;
+    if (GameState.rightLightOn) drain += 0.3;
+    if (GameState.buzzerActive) drain += 2;
     
-    // Zastosuj zużycie
-    gameState.power -= powerDrain;
+    GameState.power -= drain;
     
-    // Sprawdź czy energia się skończyła
-    if (gameState.power <= 0) {
-        gameState.power = 0;
-        gameState.isPowerOut = true;
-        powerOut();
+    if (GameState.power <= 0) {
+        GameState.power = 0;
+        GameState.isPowerOut = true;
+        triggerPowerOut();
     }
 }
 
-function powerOut() {
-    console.log("Awaria zasilania!");
+function updateAnimatronics() {
+    let activeCount = 0;
     
-    // Pokaż ostrzeżenie
-    document.getElementById('power-warning').style.display = 'flex';
-    
-    // Otwórz wszystkie drzwi (systemy awaryjne)
-    gameState.leftDoorClosed = false;
-    gameState.rightDoorClosed = false;
-    updateDoorButtons();
-    
-    // Wyłącz kamery i światła
-    gameState.camerasActive = false;
-    gameState.leftLightOn = false;
-    gameState.rightLightOn = false;
-    document.getElementById('camera-view').style.display = 'none';
-    document.getElementById('monitor').style.opacity = '0';
-    updateLightButtons();
-    
-    // Odtwórz dźwięk awarii
-    playSound('powerout');
-    
-    // Ustaw timer na atak animatroników
-    if (powerOutTimer) clearTimeout(powerOutTimer);
-    powerOutTimer = setTimeout(() => {
-        if (gameState.isPowerOut && gameState.gameActive) {
-            // Wybierz losowego animatronika do ataku
-            const activeAnimatronics = [];
-            for (const key in animatronics) {
-                if (animatronics[key].active && animatronics[key].position > 0) {
-                    activeAnimatronics.push(animatronics[key]);
-                }
+    Object.keys(activeAnimatronics).forEach(key => {
+        const animatronic = activeAnimatronics[key];
+        
+        if (animatronic.active && !GameState.isPowerOut) {
+            // Szansa na ruch
+            const moveChance = Math.random();
+            if (moveChance < (0.3 * animatronic.aggression)) {
+                moveAnimatronic(animatronic);
             }
             
-            if (activeAnimatronics.length > 0) {
-                const randomAnimatronic = activeAnimatronics[Math.floor(Math.random() * activeAnimatronics.length)];
-                triggerJumpscare(randomAnimatronic);
-            }
-        }
-    }, 30000); // 30 sekund po awarii
-}
-
-// AI ANIMATRONIKÓW
-// ----------------
-function startAnimatronicsAI() {
-    // Zatrzymaj istniejący timer
-    if (animatronicTimer) clearInterval(animatronicTimer);
-    
-    // Uruchom nowy timer
-    animatronicTimer = setInterval(() => {
-        if (gameState.gameActive && !gameState.gamePaused && !gameState.jumpscareActive && !gameState.isPowerOut) {
-            // Dla każdego aktywnego animatronika
-            for (const key in animatronics) {
-                const animatronic = animatronics[key];
-                
-                if (animatronic.active) {
-                    // Szansa na ruch
-                    const moveChance = Math.random();
-                    if (moveChance < (0.3 * animatronic.aggression * animatronic.difficultyModifier)) {
-                        moveAnimatronic(animatronic);
-                    }
-                    
-                    // Sprawdź czy animatronik jest przy drzwiach
-                    checkAnimatronicAtDoor(animatronic);
-                }
-            }
+            // Sprawdź pozycję
+            checkAnimatronicPosition(animatronic);
             
-            // Aktualizuj liczbę aktywnych animatroników
-            updateActiveAnimatronics();
+            activeCount++;
         }
-    }, 3000); // Co 3 sekundy
+    });
+    
+    GameState.activeAnimatronics = activeCount;
 }
 
 function moveAnimatronic(animatronic) {
-    // Wybierz następną pozycję z wzorca ruchu
     const pattern = animatronic.movementPattern;
     const currentIndex = pattern.indexOf(animatronic.position);
     let nextIndex;
@@ -655,323 +926,424 @@ function moveAnimatronic(animatronic) {
     animatronic.position = pattern[nextIndex];
     
     // Specialne zachowanie dla Golden Bolt
-    if (animatronic === animatronics.goldenBolt && animatronic.active) {
-        // Golden Bolt pojawia się tylko raz na noc, z małą szansą
-        const appearChance = Math.random();
-        if (appearChance < 0.05) {
-            // Pojawia się w losowej lokacji
+    if (animatronic.name === "Golden Bolt" && animatronic.active) {
+        if (Math.random() < 0.05) {
             animatronic.position = Math.floor(Math.random() * 11) + 1;
             
-            // Jeśli pojawi się w lokacji 3 lub 11 (przy drzwiach), atakuje natychmiast
             if ((animatronic.position === 3 || animatronic.position === 11)) {
-                // Sprawdź czy odpowiednie drzwi są otwarte
-                if ((animatronic.position === 3 && !gameState.leftDoorClosed) || 
-                    (animatronic.position === 11 && !gameState.rightDoorClosed)) {
+                if ((animatronic.position === 3 && !GameState.leftDoorClosed) || 
+                    (animatronic.position === 11 && !GameState.rightDoorClosed)) {
                     triggerJumpscare(animatronic);
                 }
             }
         } else {
-            animatronic.position = 0; // Wraca do ukrycia
+            animatronic.position = 0;
         }
     }
-    
-    // Sprawdź czy animatronik może zaatakować
-    checkAnimatronicAttack(animatronic);
-    
-    // Aktualizuj wyświetlanie na kamerach
-    updateCameraDisplay();
 }
 
-function checkAnimatronicAtDoor(animatronic) {
-    // Lewe drzwi - pozycja 3
+function checkAnimatronicPosition(animatronic) {
+    // Lewe drzwi
     if (animatronic.position === 3) {
-        // Wyświetl animatronika przy lewych drzwiach
-        const boltBearOffice = document.getElementById('bolt-bear-office');
-        if (animatronic === animatronics.boltBear) {
-            boltBearOffice.style.display = 'flex';
-            boltBearOffice.style.left = '140px';
-            boltBearOffice.style.bottom = '180px';
+        if (animatronic.name === "Bolt Bear") {
+            showAnimatronicInOffice(animatronic, 'left');
             
-            // Odtwórz dźwięk, jeśli drzwi są zamknięte
-            if (gameState.leftDoorClosed) {
-                playSound('doorBang');
+            if (GameState.leftDoorClosed) {
+                playSound('doorClose');
             }
         }
     }
     
-    // Prawe drzwi - pozycja 11
+    // Prawe drzwi
     if (animatronic.position === 11) {
-        // Wyświetl animatronika przy prawych drzwiach
-        const sparkyFoxOffice = document.getElementById('sparky-fox-office');
-        if (animatronic === animatronics.sparkyFox) {
-            sparkyFoxOffice.style.display = 'flex';
-            sparkyFoxOffice.style.right = '140px';
-            sparkyFoxOffice.style.bottom = '180px';
+        if (animatronic.name === "Sparky Fox") {
+            showAnimatronicInOffice(animatronic, 'right');
             
-            // Odtwórz dźwięk, jeśli drzwi są zamknięte
-            if (gameState.rightDoorClosed) {
-                playSound('doorBang');
+            if (GameState.rightDoorClosed) {
+                playSound('doorClose');
             }
         }
     }
     
-    // Jeśli animatronik nie jest przy drzwiach, ukryj go
+    // Ukryj animatronika jeśli nie jest przy drzwiach
     if (animatronic.position !== 3 && animatronic.position !== 11) {
-        if (animatronic === animatronics.boltBear) {
-            document.getElementById('bolt-bear-office').style.display = 'none';
-        }
-        if (animatronic === animatronics.sparkyFox) {
-            document.getElementById('sparky-fox-office').style.display = 'none';
-        }
+        hideAnimatronicInOffice(animatronic);
     }
+    
+    // Sprawdź atak
+    checkAnimatronicAttack(animatronic);
 }
 
 function checkAnimatronicAttack(animatronic) {
-    // Jeśli animatronik jest w pozycji 10 (za biurem), ma szansę na atak
+    // Atak z pozycji 10 (za biurem)
     if (animatronic.position === 10) {
         const attackChance = Math.random();
-        if (attackChance < (0.2 * animatronic.aggression * animatronic.difficultyModifier)) {
-            // Atak przez lewe drzwi
-            if (!gameState.leftDoorClosed && animatronic !== animatronics.goldenBolt) {
+        if (attackChance < (0.2 * animatronic.aggression)) {
+            if (!GameState.leftDoorClosed && animatronic.name !== "Golden Bolt") {
                 triggerJumpscare(animatronic);
             }
         }
     }
     
-    // Jeśli animatronik jest w pozycji 7 (przed biurem), ma szansę na atak
+    // Atak z pozycji 7 (przed biurem)
     if (animatronic.position === 7) {
         const attackChance = Math.random();
-        if (attackChance < (0.15 * animatronic.aggression * animatronic.difficultyModifier)) {
-            // Atak przez prawe drzwi
-            if (!gameState.rightDoorClosed && animatronic !== animatronics.goldenBolt) {
+        if (attackChance < (0.15 * animatronic.aggression)) {
+            if (!GameState.rightDoorClosed && animatronic.name !== "Golden Bolt") {
                 triggerJumpscare(animatronic);
             }
         }
     }
 }
 
-function updateActiveAnimatronics() {
-    let activeCount = 0;
-    for (const key in animatronics) {
-        if (animatronics[key].active && animatronics[key].position > 0) {
-            activeCount++;
+// EVENTY GRY
+// ==========
+
+function triggerPowerOut() {
+    console.log('Awaria zasilania!');
+    
+    GameState.isPowerOut = true;
+    
+    // Pokaż ostrzeżenie
+    document.getElementById('power-out-warning').style.display = 'flex';
+    
+    // Otwórz drzwi
+    GameState.leftDoorClosed = false;
+    GameState.rightDoorClosed = false;
+    updateDoorButtons();
+    
+    // Wyłącz systemy
+    GameState.camerasActive = false;
+    GameState.leftLightOn = false;
+    GameState.rightLightOn = false;
+    document.getElementById('camera-system').style.display = 'none';
+    document.getElementById('monitor-overlay').style.opacity = '0';
+    updateLightButtons();
+    
+    playSound('powerOut');
+    
+    // Timer na atak
+    powerOutTimer = setTimeout(() => {
+        if (GameState.isPowerOut && GameState.gameActive) {
+            const activeAnims = Object.values(activeAnimatronics).filter(a => a.active && a.position > 0);
+            if (activeAnims.length > 0) {
+                const randomAnim = activeAnims[Math.floor(Math.random() * activeAnims.length)];
+                triggerJumpscare(randomAnim);
+            }
         }
-    }
-    gameState.activeAnimatronics = activeCount;
+    }, 30000);
 }
 
-// JUMPSCARE
-// ---------
 function triggerJumpscare(animatronic) {
-    if (gameState.jumpscareActive) return;
+    if (GameState.jumpscareActive) return;
     
-    console.log(`Jumpscare przez ${animatronic.name}!`);
+    console.log(`Jumpscare: ${animatronic.name}`);
     
-    gameState.jumpscareActive = true;
-    gameState.gameActive = false;
+    GameState.jumpscareActive = true;
+    GameState.gameActive = false;
     
-    // Zatrzymaj timery
-    clearInterval(gameTimer);
-    clearInterval(animatronicTimer);
-    if (powerOutTimer) clearTimeout(powerOutTimer);
+    clearAllTimers();
     
     // Pokaż ekran jumpscare
-    const jumpscareDiv = document.getElementById('jumpscare');
-    const jumpscareIcon = document.getElementById('jumpscare-icon');
+    const jumpscareScreen = document.getElementById('jumpscare-screen');
     const jumpscareName = document.getElementById('jumpscare-name');
     
-    jumpscareIcon.textContent = animatronic.icon;
     jumpscareName.textContent = animatronic.name;
-    
-    jumpscareDiv.style.display = 'flex';
-    
-    // Odtwórz dźwięk jumpscare
-    playSound(animatronic.jumpscareSound);
+    jumpscareScreen.style.display = 'flex';
     
     // Wstrząs ekranu
-    if (gameState.screenShake) {
-        document.getElementById('game-screen').style.animation = 'jumpscareShake 0.5s linear infinite';
+    if (GameState.settings.graphics.screenShake) {
+        document.getElementById(`game-screen-fnuf${gameVersion}`).style.animation = 'jumpscareShake 0.5s linear infinite';
     }
+    
+    playSound('jumpscare');
+    
+    // Zapisz statystyki
+    GameState.progress[`fnuf${gameVersion}`].jumpscares++;
     
     // Po 3 sekundach wróć do menu
     setTimeout(() => {
-        jumpscareDiv.style.display = 'none';
-        gameState.jumpscareActive = false;
+        jumpscareScreen.style.display = 'none';
+        GameState.jumpscareActive = false;
         
-        // Zatrzymaj wstrząs
-        document.getElementById('game-screen').style.animation = '';
+        if (GameState.settings.graphics.screenShake) {
+            document.getElementById(`game-screen-fnuf${gameVersion}`).style.animation = '';
+        }
         
-        // Zapisz postęp gry
         saveGameProgress();
-        
-        // Wróć do menu
         showScreen('menu');
         hideNightSelect();
         
-        // Reset animatroników
         resetAnimatronics();
     }, 3000);
 }
 
-function resetAnimatronics() {
-    for (const key in animatronics) {
-        animatronics[key].position = animatronics[key].movementPattern[0];
+function checkNightCompletion() {
+    if (GameState.currentHour >= 6) {
+        completeNight();
     }
 }
 
-// UKOŃCZENIE NOCY
-// ---------------
 function completeNight() {
-    console.log(`Ukończono noc ${gameState.currentNight}!`);
+    console.log(`Ukończono noc ${GameState.currentNight}!`);
     
-    gameState.gameActive = false;
-    gameState.nightCompleted = true;
-    gameState.totalNightsCompleted = Math.max(gameState.totalNightsCompleted, gameState.currentNight);
+    GameState.gameActive = false;
+    GameState.nightCompleted = true;
     
-    // Zatrzymaj timery
-    clearInterval(gameTimer);
-    clearInterval(animatronicTimer);
-    if (powerOutTimer) clearTimeout(powerOutTimer);
+    clearAllTimers();
     
-    // Oblicz wynagrodzenie
+    // Oblicz zarobki
     const basePay = 120.50;
-    const nightBonus = gameState.currentNight * 25;
-    const powerBonus = Math.max(0, gameState.power) * 0.5;
+    const nightBonus = GameState.currentNight * 25;
+    const powerBonus = Math.max(0, GameState.power) * 0.5;
     const totalPay = basePay + nightBonus + powerBonus;
     
-    gameState.playerMoney += totalPay;
+    GameState.playerMoney += totalPay;
     
-    // Pokaż ekran ukończenia nocy
-    const nightComplete = document.getElementById('night-complete');
-    document.getElementById('completed-night').textContent = gameState.currentNight;
-    document.getElementById('night-pay').textContent = totalPay.toFixed(2);
-    document.getElementById('night-power').textContent = gameState.power.toFixed(1);
-    document.getElementById('total-money').textContent = gameState.playerMoney.toFixed(2);
+    // Aktualizuj postęp
+    const progressKey = `fnuf${gameVersion}`;
+    GameState.progress[progressKey].nightsCompleted = Math.max(
+        GameState.progress[progressKey].nightsCompleted,
+        GameState.currentNight
+    );
     
-    nightComplete.style.display = 'flex';
+    GameState.totalNightsCompleted = Math.max(
+        GameState.totalNightsCompleted,
+        GameState.currentNight
+    );
     
-    // Odtwórz dźwięk sukcesu
-    playSound('success');
+    // Pokaż ekran ukończenia
+    const completeScreen = document.getElementById('night-complete-screen');
+    document.getElementById('complete-night').textContent = GameState.currentNight;
+    document.getElementById('stat-earnings').textContent = totalPay.toFixed(2);
+    document.getElementById('stat-energy').textContent = GameState.power.toFixed(1);
+    document.getElementById('stat-attacks').textContent = GameState.jumpscaresSurvived;
+    document.getElementById('stat-time').textContent = getTimeString();
+    document.getElementById('total-earnings').textContent = GameState.playerMoney.toFixed(2);
+    
+    completeScreen.style.display = 'flex';
+    
+    playSound('nightComplete');
     
     // Zapisz postęp
-    if (gameState.currentNight < 5) {
-        gameState.currentNight++;
-    }
     saveGameProgress();
+    
+    // Odblokuj minigry jeśli potrzeba
+    updateUnlockedMinigames();
 }
 
 function nextNight() {
-    document.getElementById('night-complete').style.display = 'none';
-    startNight(gameState.currentNight);
+    GameState.currentNight++;
+    document.getElementById('night-complete-screen').style.display = 'none';
+    startNight(GameState.currentNight);
 }
 
-function backToMenuFromComplete() {
-    document.getElementById('night-complete').style.display = 'none';
-    showScreen('menu');
+// UI FUNCTIONS
+// ============
+
+function updateGameUI() {
+    // Aktualizuj czas
+    const timeString = getTimeString();
+    document.querySelector('.digital-clock').textContent = timeString;
+    document.getElementById('hud-time').textContent = timeString;
+    
+    // Aktualizuj energię
+    const powerPercent = Math.max(0, Math.min(100, GameState.power));
+    document.getElementById('hud-power').textContent = `${powerPercent.toFixed(1)}%`;
+    document.querySelector('.power-fill').style.width = `${powerPercent}%`;
+    
+    if (powerPercent < 20) {
+        document.getElementById('hud-power').classList.add('warning');
+    } else {
+        document.getElementById('hud-power').classList.remove('warning');
+    }
+    
+    // Aktualizuj noc
+    document.getElementById('hud-night').textContent = GameState.currentNight;
+    document.querySelector('.night-counter').textContent = `NOC ${GameState.currentNight}`;
+    
+    // Aktualizuj animatroniki
+    document.getElementById('hud-active').textContent = GameState.activeAnimatronics;
+    
+    // Aktualizuj status drzwi
+    updateDoorStatus();
+    
+    // Aktualizuj kamery jeśli aktywne
+    if (GameState.camerasActive) {
+        updateCameraDisplay();
+    }
+}
+
+function getTimeString() {
+    const hourDisplay = GameState.currentHour === 0 ? 12 : 
+                       GameState.currentHour > 12 ? GameState.currentHour - 12 : GameState.currentHour;
+    const ampm = GameState.currentHour >= 12 ? "PM" : "AM";
+    return `${hourDisplay}:${GameState.currentMinute.toString().padStart(2, '0')} ${ampm}`;
+}
+
+function updateDoorStatus() {
+    const leftStatus = document.querySelector('.left-door-control .status-value');
+    const rightStatus = document.querySelector('.right-door-control .status-value');
+    const leftLight = document.querySelector('.left-door-control .status-light');
+    const rightLight = document.querySelector('.right-door-control .status-light');
+    
+    if (GameState.leftDoorClosed) {
+        leftStatus.textContent = "ZAMKNIĘTE";
+        leftStatus.classList.add('closed');
+        leftLight.style.background = '#ff3300';
+    } else {
+        leftStatus.textContent = "OTWARTE";
+        leftStatus.classList.remove('closed');
+        leftLight.style.background = 'var(--fnuf1-primary)';
+    }
+    
+    if (GameState.rightDoorClosed) {
+        rightStatus.textContent = "ZAMKNIĘTE";
+        rightStatus.classList.add('closed');
+        rightLight.style.background = '#ff3300';
+    } else {
+        rightStatus.textContent = "OTWARTE";
+        rightStatus.classList.remove('closed');
+        rightLight.style.background = 'var(--fnuf1-primary)';
+    }
+}
+
+function updateDoorButtons() {
+    const leftDoor = document.getElementById('left-door-3d');
+    const rightDoor = document.getElementById('right-door-3d');
+    const leftButton = document.getElementById('left-button-3d');
+    const rightButton = document.getElementById('right-button-3d');
+    
+    if (GameState.leftDoorClosed) {
+        leftDoor?.classList.add('closed');
+        leftButton?.classList.add('active');
+    } else {
+        leftDoor?.classList.remove('closed');
+        leftButton?.classList.remove('active');
+    }
+    
+    if (GameState.rightDoorClosed) {
+        rightDoor?.classList.add('closed');
+        rightButton?.classList.add('active');
+    } else {
+        rightDoor?.classList.remove('closed');
+        rightButton?.classList.remove('active');
+    }
+}
+
+function updateLightButtons() {
+    const leftButton = document.getElementById('hud-left-light');
+    const rightButton = document.getElementById('hud-right-light');
+    
+    if (GameState.leftLightOn) {
+        leftButton?.classList.add('active');
+    } else {
+        leftButton?.classList.remove('active');
+    }
+    
+    if (GameState.rightLightOn) {
+        rightButton?.classList.add('active');
+    } else {
+        rightButton?.classList.remove('active');
+    }
 }
 
 // KONTROLA GRY
-// ------------
+// ============
+
 function toggleCameras() {
-    if (gameState.isPowerOut) {
-        showMessage("System kamer nie działa - brak zasilania!");
+    if (GameState.isPowerOut) {
+        showGameHint("System kamer nie działa - brak zasilania!");
         return;
     }
     
-    gameState.camerasActive = !gameState.camerasActive;
+    GameState.camerasActive = !GameState.camerasActive;
     
-    if (gameState.camerasActive) {
-        document.getElementById('camera-view').style.display = 'flex';
-        document.getElementById('monitor').style.opacity = '0.7';
+    const cameraSystem = document.getElementById('camera-system');
+    const monitorOverlay = document.getElementById('monitor-overlay');
+    
+    if (GameState.camerasActive) {
+        cameraSystem.style.display = 'flex';
+        monitorOverlay.style.opacity = '0.7';
         
         // Aktywuj pierwszą kamerę
         switchCamera(1);
+        updateCameraDisplay();
     } else {
-        document.getElementById('camera-view').style.display = 'none';
-        document.getElementById('monitor').style.opacity = '0';
+        cameraSystem.style.display = 'none';
+        monitorOverlay.style.opacity = '0';
     }
     
-    playSound('camera');
-}
-
-function toggleLeftLight() {
-    if (gameState.isPowerOut) {
-        showMessage("System oświetlenia nie działa - brak zasilania!");
-        return;
-    }
-    
-    gameState.leftLightOn = !gameState.leftLightOn;
-    updateLightButtons();
-    playSound('light');
-}
-
-function toggleRightLight() {
-    if (gameState.isPowerOut) {
-        showMessage("System oświetlenia nie działa - brak zasilania!");
-        return;
-    }
-    
-    gameState.rightLightOn = !gameState.rightLightOn;
-    updateLightButtons();
-    playSound('light');
+    playSound('cameraSwitch');
 }
 
 function toggleLeftDoor() {
-    if (gameState.isPowerOut) {
-        showMessage("System drzwi nie działa - brak zasilania!");
+    if (GameState.isPowerOut) {
+        showGameHint("System drzwi nie działa - brak zasilania!");
         return;
     }
     
-    gameState.leftDoorClosed = !gameState.leftDoorClosed;
+    GameState.leftDoorClosed = !GameState.leftDoorClosed;
     updateDoorButtons();
-    playSound('door');
+    updateDoorStatus();
+    playSound('doorClose');
 }
 
 function toggleRightDoor() {
-    if (gameState.isPowerOut) {
-        showMessage("System drzwi nie działa - brak zasilania!");
+    if (GameState.isPowerOut) {
+        showGameHint("System drzwi nie działa - brak zasilania!");
         return;
     }
     
-    gameState.rightDoorClosed = !gameState.rightDoorClosed;
+    GameState.rightDoorClosed = !GameState.rightDoorClosed;
     updateDoorButtons();
-    playSound('door');
+    updateDoorStatus();
+    playSound('doorClose');
+}
+
+function toggleLeftLight() {
+    if (GameState.isPowerOut) {
+        showGameHint("System oświetlenia nie działa - brak zasilania!");
+        return;
+    }
+    
+    GameState.leftLightOn = !GameState.leftLightOn;
+    updateLightButtons();
+    playSound('lightSwitch');
+}
+
+function toggleRightLight() {
+    if (GameState.isPowerOut) {
+        showGameHint("System oświetlenia nie działa - brak zasilania!");
+        return;
+    }
+    
+    GameState.rightLightOn = !GameState.rightLightOn;
+    updateLightButtons();
+    playSound('lightSwitch');
 }
 
 function useBuzzer() {
-    if (gameState.isPowerOut || gameState.buzzerActive) {
-        return;
-    }
+    if (GameState.isPowerOut || GameState.buzzerActive) return;
     
-    gameState.buzzerActive = true;
+    GameState.buzzerActive = true;
     
-    // Odtwórz dźwięk odstraszający
     playSound('buzzer');
     
-    // Odstrasz animatroniki w pobliżu drzwi
-    for (const key in animatronics) {
-        const animatronic = animatronics[key];
+    // Odstrasz animatroniki przy drzwiach
+    Object.values(activeAnimatronics).forEach(animatronic => {
         if ((animatronic.position === 3 || animatronic.position === 11) && animatronic.active) {
-            // Cofnij animatronika o jedną pozycję
             const pattern = animatronic.movementPattern;
             const currentIndex = pattern.indexOf(animatronic.position);
             if (currentIndex > 0) {
                 animatronic.position = pattern[currentIndex - 1];
-            }
-            
-            // Ukryj animatronika w biurze
-            if (animatronic === animatronics.boltBear) {
-                document.getElementById('bolt-bear-office').style.display = 'none';
-            }
-            if (animatronic === animatronics.sparkyFox) {
-                document.getElementById('sparky-fox-office').style.display = 'none';
+                hideAnimatronicInOffice(animatronic);
             }
         }
-    }
+    });
     
-    // Zresetuj dzwonek po 2 sekundach
     setTimeout(() => {
-        gameState.buzzerActive = false;
+        GameState.buzzerActive = false;
     }, 2000);
 }
 
@@ -994,907 +1366,905 @@ function showMap() {
 }
 
 function togglePause() {
-    gameState.gamePaused = !gameState.gamePaused;
+    GameState.gamePaused = !GameState.gamePaused;
     
-    if (gameState.gamePaused) {
-        document.getElementById('pause-btn').innerHTML = '<i class="fas fa-play"></i><span class="btn-label">WZNÓW</span>';
-        document.getElementById('hint-text').textContent = 'GRA ZAPAUZOWANA - Naciśnij P aby wznowić';
-        playSound('pause');
+    const pauseBtn = document.getElementById('hud-pause');
+    const hintText = document.getElementById('current-hint');
+    
+    if (GameState.gamePaused) {
+        pauseBtn.innerHTML = '<i class="fas fa-play"></i><span>WZNÓW</span><span class="small-hotkey">P</span>';
+        hintText.textContent = 'GRA ZAPAUZOWANA - Naciśnij P aby wznowić';
     } else {
-        document.getElementById('pause-btn').innerHTML = '<i class="fas fa-pause"></i><span class="btn-label">PAUZA</span>';
-        document.getElementById('hint-text').textContent = 'Używaj klawiszy C (kamery), Q/E (światła), L/R (drzwi), Spacji (dźwięk)';
-        playSound('unpause');
+        pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span>PAUZA</span><span class="small-hotkey">P</span>';
+        hintText.textContent = 'Naciśnij C aby otworzyć kamery';
     }
+    
+    playSound('menuSelect');
 }
 
-// KAMERY
-// ------
-function createCameraButtons() {
-    const camerasGrid = document.querySelector('.cameras-grid');
-    camerasGrid.innerHTML = '';
+function showGameHint(message) {
+    const hintText = document.getElementById('current-hint');
+    hintText.textContent = message;
     
-    for (let i = 0; i < cameraLocations.length; i++) {
-        const camera = cameraLocations[i];
-        const button = document.createElement('button');
-        button.className = 'camera-grid-btn';
-        button.setAttribute('data-camera-id', camera.id);
-        
-        button.innerHTML = `
-            <div class="camera-number">CAM ${camera.id}</div>
-            <div class="camera-name">${camera.name}</div>
-        `;
-        
-        button.addEventListener('click', () => {
-            switchCamera(camera.id);
-        });
-        
-        camerasGrid.appendChild(button);
-    }
+    setTimeout(() => {
+        hintText.textContent = 'Naciśnij C aby otworzyć kamery';
+    }, 3000);
 }
+
+// SYSTEM KAMER
+// ============
 
 function switchCamera(cameraId) {
-    if (!gameState.camerasActive) return;
+    if (!GameState.camerasActive) return;
     
-    // Usuń klasę active ze wszystkich przycisków
-    document.querySelectorAll('.camera-grid-btn').forEach(btn => {
-        btn.classList.remove('active');
+    currentCamera = cameraId;
+    
+    // Aktualizuj aktywne przyciski
+    document.querySelectorAll('.camera-grid-item').forEach(item => {
+        item.classList.remove('active');
     });
     
-    // Dodaj klasę active do klikniętego przycisku
-    const activeButton = document.querySelector(`.camera-grid-btn[data-camera-id="${cameraId}"]`);
+    const activeButton = document.querySelector(`.camera-grid-item[data-camera="${cameraId}"]`);
     if (activeButton) {
         activeButton.classList.add('active');
     }
     
-    // Pokaż podgląd kamery
-    showCameraFeed(cameraId);
+    // Aktualizuj podgląd kamery
+    updateCameraFeed(cameraId);
     playSound('cameraSwitch');
 }
 
-function showCameraFeed(cameraId) {
-    const camera = cameraLocations.find(cam => cam.id === cameraId);
+function updateCameraDisplay() {
+    if (!GameState.camerasActive) return;
+    
+    // Generuj siatkę kamer jeśli nie istnieje
+    if (!document.querySelector('.camera-grid-item')) {
+        generateCameraGrid();
+    }
+    
+    // Aktualizuj aktywną kamerę
+    const activeButton = document.querySelector(`.camera-grid-item[data-camera="${currentCamera}"]`);
+    if (activeButton && !activeButton.classList.contains('active')) {
+        document.querySelectorAll('.camera-grid-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        activeButton.classList.add('active');
+    }
+    
+    updateCameraFeed(currentCamera);
+}
+
+function generateCameraGrid() {
+    const cameraGrid = document.querySelector('.camera-grid');
+    if (!cameraGrid) return;
+    
+    cameraGrid.innerHTML = '';
+    
+    CameraLocationsFNUF1.forEach(camera => {
+        const cameraItem = document.createElement('div');
+        cameraItem.className = 'camera-grid-item';
+        cameraItem.setAttribute('data-camera', camera.id);
+        
+        cameraItem.innerHTML = `
+            <div class="camera-number">CAM ${camera.id}</div>
+            <div class="camera-location">${camera.name}</div>
+        `;
+        
+        cameraItem.addEventListener('click', () => switchCamera(camera.id));
+        cameraGrid.appendChild(cameraItem);
+    });
+}
+
+function updateCameraFeed(cameraId) {
+    const camera = CameraLocationsFNUF1.find(c => c.id === cameraId);
     if (!camera) return;
     
-    // Aktualizuj nagłówek kamery
-    document.querySelector('.camera-title').textContent = `KAMERA ${cameraId}: ${camera.name}`;
-    
-    // Aktualizuj czas
-    const timeString = getTimeString();
-    document.querySelector('.camera-time').textContent = timeString;
+    // Aktualizuj informacje o kamerze
+    document.querySelector('.camera-name').textContent = `KAMERA ${cameraId}: ${camera.name}`;
+    document.querySelector('.camera-time').textContent = getTimeString();
     
     // Sprawdź które animatroniki są w tej lokacji
-    const animatronicsHere = [];
-    for (const key in animatronics) {
-        if (animatronics[key].position === cameraId) {
-            animatronicsHere.push(animatronics[key]);
-        }
-    }
+    const animatronicsHere = Object.values(activeAnimatronics).filter(a => 
+        a.active && a.position === cameraId
+    );
     
     // Aktualizuj status
-    const statusValue = document.querySelector('.status-value');
+    const statusValue = document.querySelector('.camera-status span');
+    const statusIndicator = document.querySelector('.status-indicator');
+    
     if (animatronicsHere.length > 0) {
         statusValue.textContent = `${animatronicsHere.length} WIDOCZNYCH`;
-        statusValue.className = 'status-value inactive';
+        statusIndicator.classList.remove('active');
+        statusIndicator.classList.add('inactive');
     } else {
         statusValue.textContent = 'BRAK AKTYWNOŚCI';
-        statusValue.className = 'status-value active';
+        statusIndicator.classList.remove('inactive');
+        statusIndicator.classList.add('active');
     }
 }
 
-function updateCameraDisplay() {
-    if (!gameState.camerasActive) return;
-    
-    // Znajdź aktywną kamerę
-    const activeButton = document.querySelector('.camera-grid-btn.active');
-    if (activeButton) {
-        const cameraId = parseInt(activeButton.getAttribute('data-camera-id'));
-        showCameraFeed(cameraId);
-    }
+// USTAWIENIA
+// ==========
+
+function showSettings() {
+    showScreen('settings');
+    loadSettingsToUI();
 }
 
-// UPDATE UI
-// ---------
-function updateUI() {
-    // Aktualizuj czas
-    const timeString = getTimeString();
-    document.getElementById('clock').querySelector('.clock-time').textContent = timeString;
-    document.getElementById('hud-time').textContent = timeString;
-    
-    // Aktualizuj moc
-    const powerPercent = Math.max(0, Math.min(100, gameState.power));
-    document.getElementById('hud-power').textContent = `${powerPercent.toFixed(1)}%`;
-    
-    if (powerPercent < 20) {
-        document.getElementById('hud-power').className = 'stat-value warning';
-    } else {
-        document.getElementById('hud-power').className = 'stat-value';
-    }
-    
-    // Aktualizuj noc
-    document.getElementById('hud-night').textContent = gameState.currentNight;
-    
-    // Aktualizuj aktywne animatroniki
-    document.getElementById('hud-active').textContent = gameState.activeAnimatronics;
-    
-    // Aktualizuj status drzwi
-    updateDoorStatus();
-    
-    // Aktualizuj podgląd kamery jeśli aktywny
-    updateCameraDisplay();
+function hideSettings() {
+    showScreen('menu');
 }
 
-function getTimeString() {
-    const hourDisplay = gameState.currentHour === 0 ? 12 : 
-                       gameState.currentHour > 12 ? gameState.currentHour - 12 : gameState.currentHour;
-    const ampm = gameState.currentHour >= 12 ? "PM" : "AM";
-    return `${hourDisplay}:${gameState.currentMinute.toString().padStart(2, '0')} ${ampm}`;
+function switchSettingsTab(tabId) {
+    // Ukryj wszystkie zakładki
+    document.querySelectorAll('.settings-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Pokaż wybraną zakładkę
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+    document.querySelector(`.settings-tab[data-tab="${tabId}"]`).classList.add('active');
 }
 
-function updateDoorStatus() {
-    const leftDoorStatus = document.getElementById('left-door-status');
-    const rightDoorStatus = document.getElementById('right-door-status');
+function loadSettingsToUI() {
+    // Audio
+    document.getElementById('master-volume').value = GameState.settings.audio.masterVolume;
+    document.getElementById('master-volume-value').textContent = GameState.settings.audio.masterVolume + '%';
     
-    if (gameState.leftDoorClosed) {
-        leftDoorStatus.textContent = "ZAMKNIĘTE";
-        leftDoorStatus.className = "door-value closed";
-    } else {
-        leftDoorStatus.textContent = "OTWARTE";
-        leftDoorStatus.className = "door-value";
-    }
+    document.getElementById('music-volume').value = GameState.settings.audio.musicVolume;
+    document.getElementById('music-volume-value').textContent = GameState.settings.audio.musicVolume + '%';
     
-    if (gameState.rightDoorClosed) {
-        rightDoorStatus.textContent = "ZAMKNIĘTE";
-        rightDoorStatus.className = "door-value closed";
-    } else {
-        rightDoorStatus.textContent = "OTWARTE";
-        rightDoorStatus.className = "door-value";
-    }
+    document.getElementById('sfx-volume').value = GameState.settings.audio.sfxVolume;
+    document.getElementById('sfx-volume-value').textContent = GameState.settings.audio.sfxVolume + '%';
+    
+    document.getElementById('animatronic-volume').value = GameState.settings.audio.animatronicVolume;
+    document.getElementById('animatronic-volume-value').textContent = GameState.settings.audio.animatronicVolume + '%';
+    
+    document.getElementById('mute-jumpscares').checked = GameState.settings.audio.muteJumpscares;
+    document.getElementById('static-effects').checked = GameState.settings.audio.staticEffects;
+    
+    // Grafika
+    document.getElementById('texture-quality').value = GameState.settings.graphics.textureQuality;
+    document.getElementById('lighting-quality').value = GameState.settings.graphics.lightingQuality;
+    document.getElementById('render-quality').value = GameState.settings.graphics.renderQuality;
+    document.getElementById('film-effects').checked = GameState.settings.graphics.filmEffects;
+    document.getElementById('lens-effects').checked = GameState.settings.graphics.lensEffects;
+    document.getElementById('screen-shake').checked = GameState.settings.graphics.screenShake;
+    
+    // Sterowanie
+    updateKeybindDisplay();
+    document.getElementById('mouse-control').checked = GameState.settings.controls.mouseControl;
+    
+    // Rozgrywka
+    document.getElementById('difficulty-level').value = GameState.settings.gameplay.difficulty;
+    document.getElementById('power-drain').value = GameState.settings.gameplay.powerDrain;
+    document.getElementById('audio-warnings').checked = GameState.settings.gameplay.audioWarnings;
+    document.getElementById('interface-hints').checked = GameState.settings.gameplay.interfaceHints;
+    document.getElementById('night-timer').checked = GameState.settings.gameplay.nightTimer;
+    document.getElementById('autosave-frequency').value = GameState.settings.gameplay.autosave;
 }
 
-function updateDoorButtons() {
-    const leftDoor = document.getElementById('left-door');
-    const rightDoor = document.getElementById('right-door');
-    const leftButton = document.getElementById('left-door-button');
-    const rightButton = document.getElementById('right-door-button');
+function updateKeybindDisplay() {
+    // Główna gra
+    document.querySelector('.keybind-btn[data-action="cameras"]').textContent = 
+        GameState.settings.controls.keybinds.cameras;
+    document.querySelector('.keybind-btn[data-action="leftDoor"]').textContent = 
+        GameState.settings.controls.keybinds.leftDoor;
+    document.querySelector('.keybind-btn[data-action="rightDoor"]').textContent = 
+        GameState.settings.controls.keybinds.rightDoor;
+    document.querySelector('.keybind-btn[data-action="leftLight"]').textContent = 
+        GameState.settings.controls.keybinds.leftLight;
+    document.querySelector('.keybind-btn[data-action="rightLight"]').textContent = 
+        GameState.settings.controls.keybinds.rightLight;
+    document.querySelector('.keybind-btn[data-action="buzzer"]').textContent = 
+        GameState.settings.controls.keybinds.buzzer === ' ' ? 'SPACJA' : GameState.settings.controls.keybinds.buzzer;
+    document.querySelector('.keybind-btn[data-action="map"]').textContent = 
+        GameState.settings.controls.keybinds.map;
+    document.querySelector('.keybind-btn[data-action="pause"]').textContent = 
+        GameState.settings.controls.keybinds.pause;
     
-    if (gameState.leftDoorClosed) {
-        leftDoor.classList.add('closed');
-        leftButton.classList.add('active');
-    } else {
-        leftDoor.classList.remove('closed');
-        leftButton.classList.remove('active');
-    }
-    
-    if (gameState.rightDoorClosed) {
-        rightDoor.classList.add('closed');
-        rightButton.classList.add('active');
-    } else {
-        rightDoor.classList.remove('closed');
-        rightButton.classList.remove('active');
-    }
+    // Minigra
+    document.getElementById('control-left').textContent = 
+        GameState.settings.controls.minigameBinds.left === 'ArrowLeft' ? '←' : 
+        GameState.settings.controls.minigameBinds.left;
+    document.getElementById('control-right').textContent = 
+        GameState.settings.controls.minigameBinds.right === 'ArrowRight' ? '→' : 
+        GameState.settings.controls.minigameBinds.right;
+    document.getElementById('control-action').textContent = 
+        GameState.settings.controls.minigameBinds.shoot === ' ' ? 'SPACJA' : 
+        GameState.settings.controls.minigameBinds.shoot;
 }
 
-function updateLightButtons() {
-    const leftButton = document.getElementById('lights-left-btn');
-    const rightButton = document.getElementById('lights-right-btn');
+function startKeybindChange(action, button) {
+    const oldText = button.textContent;
+    button.textContent = '...';
+    button.classList.add('changing');
     
-    if (gameState.leftLightOn) {
-        leftButton.classList.add('active');
-    } else {
-        leftButton.classList.remove('active');
-    }
-    
-    if (gameState.rightLightOn) {
-        rightButton.classList.add('active');
-    } else {
-        rightButton.classList.remove('active');
-    }
-}
-
-// MINIGRA
-// -------
-function initMiniGameCanvas() {
-    const canvas = document.getElementById('mini-game-canvas');
-    miniGameCtx = canvas.getContext('2d');
-    
-    // Setup sterowania
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-}
-
-function startMiniGame() {
-    console.log("Rozpoczynanie minigry...");
-    
-    // Reset stanu minigry
-    resetMiniGame();
-    
-    // Ustaw flagę aktywności
-    miniGameActive = true;
-    
-    // Rozpocznij pętlę gry
-    if (miniGameInterval) clearInterval(miniGameInterval);
-    miniGameInterval = setInterval(updateMiniGame, 1000/60);
-    
-    // Ukryj przycisk start
-    document.getElementById('mini-game-start').style.display = 'none';
-    
-    console.log("Minigra rozpoczęta!");
-}
-
-function resetMiniGame() {
-    // Reset zmiennych
-    miniGamePlayer = { x: 400, y: 450, width: 40, height: 40, speed: 6 };
-    miniGameEnemies = [];
-    miniGameProjectiles = [];
-    miniGameScore = 0;
-    miniGameLives = 3;
-    miniGameLevel = 1;
-    miniGameKeys = { left: false, right: false, space: false };
-    
-    // Stwórz początkowe wrogie
-    for (let i = 0; i < 5; i++) {
-        miniGameEnemies.push({
-            x: Math.random() * (800 - 40),
-            y: Math.random() * 200,
-            width: 40,
-            height: 40,
-            speed: 1 + Math.random() * 2,
-            type: Math.floor(Math.random() * 3),
-            health: 1
-        });
-    }
-    
-    // Aktualizuj UI
-    updateMiniGameUI();
-    
-    // Pokaż przycisk start
-    document.getElementById('mini-game-start').style.display = 'block';
-}
-
-function updateMiniGame() {
-    if (!miniGameActive) return;
-    
-    // Czyść canvas
-    miniGameCtx.clearRect(0, 0, 800, 500);
-    
-    // Porusz graczem
-    if (miniGameKeys.left) {
-        miniGamePlayer.x = Math.max(0, miniGamePlayer.x - miniGamePlayer.speed);
-    }
-    if (miniGameKeys.right) {
-        miniGamePlayer.x = Math.min(760, miniGamePlayer.x + miniGamePlayer.speed);
-    }
-    
-    // Porusz pociskami
-    for (let i = miniGameProjectiles.length - 1; i >= 0; i--) {
-        const projectile = miniGameProjectiles[i];
-        projectile.y -= projectile.speed;
+    const keyHandler = function(e) {
+        e.preventDefault();
         
-        // Sprawdź kolizje z wrogami
-        for (let j = miniGameEnemies.length - 1; j >= 0; j--) {
-            const enemy = miniGameEnemies[j];
-            if (checkCollision(projectile, enemy)) {
-                enemy.health--;
-                if (enemy.health <= 0) {
-                    miniGameScore += 10;
-                    miniGameEnemies.splice(j, 1);
-                }
-                miniGameProjectiles.splice(i, 1);
-                break;
-            }
+        let key = e.key.toUpperCase();
+        if (key === ' ') key = 'SPACJA';
+        
+        // Zapisz nowy keybind
+        if (action.startsWith('mini')) {
+            // Minigra
+            const miniAction = action.replace('mini', '').toLowerCase();
+            GameState.settings.controls.minigameBinds[miniAction] = key;
+        } else {
+            // Główna gra
+            GameState.settings.controls.keybinds[action] = key;
         }
         
-        // Usuń pociski poza ekranem
-        if (projectile.y < 0) {
-            miniGameProjectiles.splice(i, 1);
-        }
-    }
-    
-    // Porusz wrogami
-    for (let i = miniGameEnemies.length - 1; i >= 0; i--) {
-        const enemy = miniGameEnemies[i];
-        enemy.y += enemy.speed;
+        // Zaktualizuj wyświetlanie
+        updateKeybindDisplay();
         
-        // Jeśli wróg dotrze do dołu, odejmij życie
-        if (enemy.y > 500) {
-            miniGameLives--;
-            miniGameEnemies.splice(i, 1);
+        // Wyczyść event listener
+        document.removeEventListener('keydown', keyHandler);
+        button.classList.remove('changing');
+    };
+    
+    document.addEventListener('keydown', keyHandler);
+    
+    // Anuluj po 5 sekundach
+    setTimeout(() => {
+        document.removeEventListener('keydown', keyHandler);
+        button.textContent = oldText;
+        button.classList.remove('changing');
+    }, 5000);
+}
+
+function resetControls() {
+    if (confirm('Czy na pewno chcesz przywrócić domyślne ustawienia sterowania?')) {
+        // Domyślne keybinds głównej gry
+        GameState.settings.controls.keybinds = {
+            cameras: 'C',
+            leftDoor: 'L',
+            rightDoor: 'R',
+            leftLight: 'Q',
+            rightLight: 'E',
+            buzzer: ' ',
+            map: 'M',
+            pause: 'P'
+        };
+        
+        // Domyślne keybinds minigry
+        GameState.settings.controls.minigameBinds = {
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            shoot: ' ',
+            pause: 'Escape'
+        };
+        
+        GameState.settings.controls.mouseControl = false;
+        
+        updateKeybindDisplay();
+        showGameHint('Sterowanie zresetowane do ustawień domyślnych');
+    }
+}
+
+function applySettings() {
+    console.log('Zastosowywanie ustawień...');
+    
+    // Audio
+    GameState.settings.audio.masterVolume = parseInt(document.getElementById('master-volume').value);
+    GameState.settings.audio.musicVolume = parseInt(document.getElementById('music-volume').value);
+    GameState.settings.audio.sfxVolume = parseInt(document.getElementById('sfx-volume').value);
+    GameState.settings.audio.animatronicVolume = parseInt(document.getElementById('animatronic-volume').value);
+    GameState.settings.audio.muteJumpscares = document.getElementById('mute-jumpscares').checked;
+    GameState.settings.audio.staticEffects = document.getElementById('static-effects').checked;
+    
+    // Grafika
+    GameState.settings.graphics.textureQuality = document.getElementById('texture-quality').value;
+    GameState.settings.graphics.lightingQuality = document.getElementById('lighting-quality').value;
+    GameState.settings.graphics.renderQuality = document.getElementById('render-quality').value;
+    GameState.settings.graphics.filmEffects = document.getElementById('film-effects').checked;
+    GameState.settings.graphics.lensEffects = document.getElementById('lens-effects').checked;
+    GameState.settings.graphics.screenShake = document.getElementById('screen-shake').checked;
+    
+    // Sterowanie (już zaktualizowane przez keybind changes)
+    GameState.settings.controls.mouseControl = document.getElementById('mouse-control').checked;
+    
+    // Rozgrywka
+    GameState.settings.gameplay.difficulty = document.getElementById('difficulty-level').value;
+    GameState.settings.gameplay.powerDrain = document.getElementById('power-drain').value;
+    GameState.settings.gameplay.audioWarnings = document.getElementById('audio-warnings').checked;
+    GameState.settings.gameplay.interfaceHints = document.getElementById('interface-hints').checked;
+    GameState.settings.gameplay.nightTimer = document.getElementById('night-timer').checked;
+    GameState.settings.gameplay.autosave = document.getElementById('autosave-frequency').value;
+    
+    // Zapisz ustawienia
+    saveSettings();
+    
+    showGameHint('Ustawienia zastosowane i zapisane');
+    hideSettings();
+}
+
+// MINIGRY
+// =======
+
+function showMinigames() {
+    showScreen('minigames');
+}
+
+function hideMinigames() {
+    showScreen('menu');
+}
+
+function updateMinigamesUI() {
+    document.querySelectorAll('.minigame-card').forEach(card => {
+        const game = card.getAttribute('data-game');
+        const minigame = Minigames[game];
+        
+        if (minigame) {
+            const stats = card.querySelector('.minigame-stats');
+            const button = card.querySelector('.play-minigame-btn');
             
-            // Jeśli skończą się życia, zakończ minigrę
-            if (miniGameLives <= 0) {
-                endMiniGame();
-                return;
-            }
-        }
-        
-        // Sprawdź kolizję z graczem
-        if (checkCollision(miniGamePlayer, enemy)) {
-            miniGameLives--;
-            miniGameEnemies.splice(i, 1);
+            // Sprawdź czy odblokowana
+            const requiredNight = minigame.requiredNight;
+            const currentNight = GameState.progress[`fnuf${gameVersion}`].nightsCompleted;
             
-            if (miniGameLives <= 0) {
-                endMiniGame();
-                return;
+            if (currentNight >= requiredNight) {
+                minigame.unlocked = true;
+                card.style.opacity = '1';
+                button.disabled = false;
+                stats.querySelector('.stat:first-child').innerHTML = 
+                    `<i class="fas fa-check"></i> ODBLOKOWANA`;
+            } else {
+                minigame.unlocked = false;
+                card.style.opacity = '0.6';
+                button.disabled = true;
+                stats.querySelector('.stat:first-child').innerHTML = 
+                    `<i class="fas fa-lock"></i> WYMAGANA NOC ${requiredNight}`;
             }
+            
+            // Aktualizuj wynik
+            stats.querySelector('.stat:last-child').innerHTML = 
+                `<i class="fas fa-trophy"></i> WYNIK: ${minigame.highScore}`;
         }
-    }
-    
-    // Dodaj nowych wrogów jeśli potrzeba
-    if (miniGameEnemies.length < 5 + miniGameLevel * 2) {
-        miniGameEnemies.push({
-            x: Math.random() * (800 - 40),
-            y: -40,
-            width: 40,
-            height: 40,
-            speed: 1 + Math.random() * 2 + miniGameLevel * 0.2,
-            type: Math.floor(Math.random() * 3),
-            health: 1
-        });
-    }
-    
-    // Zwiększ poziom
-    if (miniGameScore >= miniGameLevel * 100) {
-        miniGameLevel++;
-    }
-    
-    // Rysuj wszystko
-    drawMiniGame();
-    
-    // Aktualizuj UI
-    updateMiniGameUI();
-}
-
-function drawMiniGame() {
-    // Tło
-    miniGameCtx.fillStyle = '#001100';
-    miniGameCtx.fillRect(0, 0, 800, 500);
-    
-    // Gracz (zielony kwadrat)
-    miniGameCtx.fillStyle = '#0f0';
-    miniGameCtx.fillRect(miniGamePlayer.x, miniGamePlayer.y, miniGamePlayer.width, miniGamePlayer.height);
-    
-    // Oczy gracza
-    miniGameCtx.fillStyle = '#fff';
-    miniGameCtx.fillRect(miniGamePlayer.x + 8, miniGamePlayer.y + 8, 8, 8);
-    miniGameCtx.fillRect(miniGamePlayer.x + 24, miniGamePlayer.y + 8, 8, 8);
-    
-    // Pociski
-    miniGameCtx.fillStyle = '#0ff';
-    miniGameProjectiles.forEach(projectile => {
-        miniGameCtx.fillRect(projectile.x, projectile.y, projectile.width, projectile.height);
-    });
-    
-    // Wrogowie
-    miniGameEnemies.forEach(enemy => {
-        switch(enemy.type) {
-            case 0:
-                miniGameCtx.fillStyle = '#f00';
-                break;
-            case 1:
-                miniGameCtx.fillStyle = '#900';
-                break;
-            case 2:
-                miniGameCtx.fillStyle = '#c00';
-                break;
-        }
-        
-        miniGameCtx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-        
-        // Oczy wrogów
-        miniGameCtx.fillStyle = '#fff';
-        miniGameCtx.fillRect(enemy.x + 8, enemy.y + 8, 8, 8);
-        miniGameCtx.fillRect(enemy.x + 24, enemy.y + 8, 8, 8);
     });
 }
 
-function shootProjectile() {
-    miniGameProjectiles.push({
-        x: miniGamePlayer.x + miniGamePlayer.width / 2 - 5,
-        y: miniGamePlayer.y,
-        width: 10,
-        height: 20,
-        speed: 10
-    });
-    
-    playSound('shoot');
-}
-
-function checkCollision(rect1, rect2) {
-    return rect1.x < rect2.x + rect2.width &&
-           rect1.x + rect1.width > rect2.x &&
-           rect1.y < rect2.y + rect2.height &&
-           rect1.y + rect1.height > rect2.y;
-}
-
-function updateMiniGameUI() {
-    document.getElementById('mini-game-score').textContent = miniGameScore;
-    document.getElementById('mini-game-lives').textContent = miniGameLives;
-    document.getElementById('mini-game-level').textContent = miniGameLevel;
-}
-
-function endMiniGame() {
-    miniGameActive = false;
-    clearInterval(miniGameInterval);
-    
-    // Rysuj ekran końcowy
-    miniGameCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    miniGameCtx.fillRect(0, 0, 800, 500);
-    
-    miniGameCtx.fillStyle = '#0f0';
-    miniGameCtx.font = '48px Courier New';
-    miniGameCtx.textAlign = 'center';
-    miniGameCtx.fillText('KONIEC GRY', 400, 150);
-    
-    miniGameCtx.font = '32px Courier New';
-    miniGameCtx.fillText(`Wynik: ${miniGameScore}`, 400, 220);
-    miniGameCtx.fillText(`Poziom: ${miniGameLevel}`, 400, 270);
-    
-    // Dodaj nagrodę za minigrę
-    if (miniGameScore > 0) {
-        const reward = miniGameScore * 0.1;
-        gameState.playerMoney += reward;
-        miniGameCtx.fillText(`Nagroda: $${reward.toFixed(2)}`, 400, 320);
-        saveGameProgress();
-    }
-    
-    miniGameCtx.font = '24px Courier New';
-    miniGameCtx.fillText('Kliknij "Powrót do menu" aby kontynuować', 400, 400);
-    
-    // Pokaż przycisk start
-    document.getElementById('mini-game-start').style.display = 'block';
-    document.getElementById('mini-game-start').innerHTML = '<i class="fas fa-redo"></i> ZAGRAJ PONOWNIE';
-}
-
-// DŹWIĘKI
-// -------
-function initAudio() {
-    try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        console.log("AudioContext zainicjalizowany!");
-    } catch (e) {
-        console.error("Web Audio API nie jest wspierane w tej przeglądarce", e);
-    }
-}
-
-function playSound(soundName) {
-    if (!gameState.soundEffects || !audioContext) return;
-    
-    try {
-        let oscillator, gainNode;
+function updateUnlockedMinigames() {
+    Object.keys(Minigames).forEach(gameKey => {
+        const minigame = Minigames[gameKey];
+        const progress = GameState.progress[`fnuf${gameVersion}`];
         
-        switch(soundName) {
-            case 'start':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.5);
-                
-                gainNode.gain.setValueAtTime(0.1 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.5);
-                break;
-                
-            case 'camera':
-            case 'cameraSwitch':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'square';
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.05 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.1);
-                break;
-                
-            case 'light':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.03 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.05);
-                break;
-                
-            case 'door':
-            case 'doorBang':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.1 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.2);
-                break;
-                
-            case 'buzzer':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
-                
-                gainNode.gain.setValueAtTime(0.2 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.5);
-                break;
-                
-            case 'powerout':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 1);
-                
-                gainNode.gain.setValueAtTime(0.15 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 1);
-                break;
-                
-            case 'bear':
-            case 'fox':
-            case 'chica':
-            case 'pirate':
-            case 'golden':
-                // Jumpscare sounds
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.5);
-                
-                gainNode.gain.setValueAtTime(0.3 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.5);
-                break;
-                
-            case 'success':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.2); // E5
-                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.4); // G5
-                
-                gainNode.gain.setValueAtTime(0.1 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.setValueAtTime(0.1 * (gameState.soundVolume / 100), audioContext.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.1 * (gameState.soundVolume / 100), audioContext.currentTime + 0.4);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.6);
-                break;
-                
-            case 'pause':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(349.23, audioContext.currentTime); // F4
-                
-                gainNode.gain.setValueAtTime(0.05 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.2);
-                break;
-                
-            case 'unpause':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                
-                gainNode.gain.setValueAtTime(0.05 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.2);
-                break;
-                
-            case 'shoot':
-                oscillator = audioContext.createOscillator();
-                gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = 'square';
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.03 * (gameState.soundVolume / 100), audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.1);
-                break;
+        if (progress.nightsCompleted >= minigame.requiredNight) {
+            minigame.unlocked = true;
         }
-    } catch (e) {
-        console.error("Błąd odtwarzania dźwięku:", e);
+    });
+}
+
+function startMinigame(gameType) {
+    console.log(`Rozpoczynanie minigry: ${gameType}`);
+    
+    minigameActive = true;
+    minigameType = gameType;
+    minigameScore = 0;
+    minigameTime = 60;
+    minigameLevel = 1;
+    
+    // Pokaż ekran minigry
+    showScreen('minigameCanvas');
+    
+    // Ustaw tytuł i instrukcje
+    const minigame = Minigames[gameType];
+    document.getElementById('minigame-title').textContent = minigame.name;
+    document.getElementById('minigame-desc').textContent = minigame.description;
+    
+    // Zaktualizuj UI
+    updateMinigameUI();
+    
+    // Inicjalizuj Three.js dla minigry
+    initMinigame3D(gameType);
+    
+    // Rozpocznij timer
+    startMinigameTimer();
+    
+    playSound('menuSelect');
+}
+
+function hideMinigame() {
+    minigameActive = false;
+    clearInterval(minigameInterval);
+    
+    if (minigameRenderer) {
+        minigameRenderer.dispose();
+    }
+    
+    showScreen('minigames');
+}
+
+function initMinigame3D(gameType) {
+    // Inicjalizacja Three.js scene dla minigry
+    const canvas = document.getElementById('minigame-3d-canvas');
+    
+    // Utwórz scenę
+    minigameScene = new THREE.Scene();
+    minigameScene.background = new THREE.Color(0x001100);
+    
+    // Utwórz kamerę
+    minigameCamera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
+    minigameCamera.position.z = 15;
+    
+    // Utwórz renderer
+    minigameRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    minigameRenderer.setSize(canvas.width, canvas.height);
+    
+    // Dodaj oświetlenie
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    minigameScene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(10, 10, 5);
+    minigameScene.add(directionalLight);
+    
+    // Dodaj obiekty w zależności od typu minigry
+    switch(gameType) {
+        case 'ventRepair':
+            createVentRepairGame();
+            break;
+        case 'memoryMatch':
+            createMemoryMatchGame();
+            break;
+        case 'cameraHack':
+            createCameraHackGame();
+            break;
+        case 'powerGrid':
+            createPowerGridGame();
+            break;
+    }
+    
+    // Rozpocznij animację
+    animateMinigame();
+}
+
+function createVentRepairGame() {
+    // Tworzenie gry naprawy wentylacji
+    // Prosta implementacja z przeszkodami do unikania
+    
+    // Podłoga
+    const floorGeometry = new THREE.PlaneGeometry(50, 30);
+    const floorMaterial = new THREE.MeshPhongMaterial({ color: 0x222222 });
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -5;
+    minigameScene.add(floor);
+    
+    // Gracz
+    const playerGeometry = new THREE.BoxGeometry(2, 2, 2);
+    const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const player = new THREE.Mesh(playerGeometry, playerMaterial);
+    player.position.y = 1;
+    minigameScene.userData.player = player;
+    minigameScene.add(player);
+    
+    // Przeszkody
+    for (let i = 0; i < 10; i++) {
+        const obstacleGeometry = new THREE.BoxGeometry(3, 3, 3);
+        const obstacleMaterial = new THREE.MeshPhongMaterial({ color: 0xff3300 });
+        const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial);
+        
+        obstacle.position.x = (Math.random() - 0.5) * 40;
+        obstacle.position.z = -20 - i * 10;
+        obstacle.position.y = 1.5;
+        
+        minigameScene.userData.obstacles = minigameScene.userData.obstacles || [];
+        minigameScene.userData.obstacles.push(obstacle);
+        minigameScene.add(obstacle);
     }
 }
 
-function updateAudioVolume() {
-    // Ta funkcja mogłaby aktualizować głośność aktywnych dźwięków
-    // W obecnej implementacji głośność jest ustawiana przy każdym odtworzeniu
+function animateMinigame() {
+    if (!minigameActive) return;
+    
+    requestAnimationFrame(animateMinigame);
+    
+    // Logika gry w zależności od typu
+    switch(minigameType) {
+        case 'ventRepair':
+            updateVentRepairGame();
+            break;
+        case 'memoryMatch':
+            updateMemoryMatchGame();
+            break;
+        case 'cameraHack':
+            updateCameraHackGame();
+            break;
+        case 'powerGrid':
+            updatePowerGridGame();
+            break;
+    }
+    
+    minigameRenderer.render(minigameScene, minigameCamera);
+}
+
+function updateVentRepairGame() {
+    const player = minigameScene.userData.player;
+    const obstacles = minigameScene.userData.obstacles;
+    
+    if (!player || !obstacles) return;
+    
+    // Poruszaj przeszkodami do przodu
+    obstacles.forEach(obstacle => {
+        obstacle.position.z += 0.1 * minigameLevel;
+        
+        // Jeśli przeszkoda minęła gracza, zresetuj ją
+        if (obstacle.position.z > 10) {
+            obstacle.position.z = -50;
+            obstacle.position.x = (Math.random() - 0.5) * 40;
+            
+            // Dodaj punkty
+            minigameScore += 10 * minigameLevel;
+            updateMinigameUI();
+        }
+        
+        // Sprawdź kolizję
+        const distance = Math.sqrt(
+            Math.pow(player.position.x - obstacle.position.x, 2) +
+            Math.pow(player.position.z - obstacle.position.z, 2)
+        );
+        
+        if (distance < 2.5) {
+            // Kolizja
+            minigameTime -= 5;
+            obstacle.position.z = -50;
+            obstacle.position.x = (Math.random() - 0.5) * 40;
+            updateMinigameUI();
+        }
+    });
+}
+
+function updateMinigameUI() {
+    document.getElementById('mg-score').textContent = minigameScore;
+    document.getElementById('mg-time').textContent = Math.max(0, minigameTime);
+    document.getElementById('mg-level').textContent = minigameLevel;
+}
+
+function startMinigameTimer() {
+    minigameInterval = setInterval(() => {
+        if (!minigameActive) return;
+        
+        minigameTime--;
+        updateMinigameUI();
+        
+        if (minigameTime <= 0) {
+            endMinigame();
+        }
+        
+        // Zwiększ poziom co 20 sekund
+        if (minigameTime % 20 === 0 && minigameTime > 0) {
+            minigameLevel++;
+            updateMinigameUI();
+        }
+    }, 1000);
+}
+
+function toggleMinigamePause() {
+    // Tymczasowa implementacja
+    minigameActive = !minigameActive;
+    
+    const button = document.getElementById('minigame-pause');
+    if (minigameActive) {
+        button.innerHTML = '<i class="fas fa-pause"></i> PAUZA';
+        startMinigameTimer();
+    } else {
+        button.innerHTML = '<i class="fas fa-play"></i> WZNÓW';
+        clearInterval(minigameInterval);
+    }
+}
+
+function endMinigame() {
+    clearInterval(minigameInterval);
+    minigameActive = false;
+    
+    // Zapisz wynik jeśli jest lepszy
+    const minigame = Minigames[minigameType];
+    if (minigameScore > minigame.highScore) {
+        minigame.highScore = minigameScore;
+        
+        // Zapisz w localStorage
+        const savedMinigames = JSON.parse(localStorage.getItem('fnufMinigames') || '{}');
+        savedMinigames[minigameType] = minigameScore;
+        localStorage.setItem('fnufMinigames', JSON.stringify(savedMinigames));
+    }
+    
+    // Pokaż wynik
+    alert(`Koniec gry!\nWynik: ${minigameScore}\nPoziom: ${minigameLevel}\nNajlepszy wynik: ${minigame.highScore}`);
+    
+    hideMinigame();
+}
+
+// CREDITS
+// =======
+
+function showCredits() {
+    showScreen('credits');
+}
+
+function hideCredits() {
+    showScreen('menu');
 }
 
 // ZAPIS I ŁADOWANIE
-// -----------------
-function saveGameProgress() {
-    const progress = {
-        currentNight: gameState.currentNight,
-        playerMoney: gameState.playerMoney,
-        totalNightsCompleted: gameState.totalNightsCompleted,
-        unlockedMinigames: gameState.totalNightsCompleted > 0
-    };
-    
-    localStorage.setItem('fnufProgress', JSON.stringify(progress));
-    console.log("Postęp gry zapisany!");
-}
-
-function loadGameProgress() {
-    const savedProgress = localStorage.getItem('fnufProgress');
-    if (savedProgress) {
-        try {
-            const progress = JSON.parse(savedProgress);
-            gameState.currentNight = progress.currentNight || 1;
-            gameState.playerMoney = progress.playerMoney || 0;
-            gameState.totalNightsCompleted = progress.totalNightsCompleted || 0;
-            
-            // Jeśli odblokowano minigry, pokaż przycisk
-            if (progress.unlockedMinigames) {
-                document.getElementById('mini-game-btn').style.display = 'flex';
-            }
-            
-            console.log("Postęp gry załadowany!");
-        } catch (e) {
-            console.error("Błąd ładowania postępu gry:", e);
-        }
-    }
-}
+// =================
 
 function saveSettings() {
-    const settings = {
-        soundVolume: gameState.soundVolume,
-        soundEffects: gameState.soundEffects,
-        backgroundMusic: gameState.backgroundMusic,
-        screenShake: gameState.screenShake,
-        theme: gameState.theme
-    };
-    
-    localStorage.setItem('fnufSettings', JSON.stringify(settings));
-    showMessage("Ustawienia zapisane!");
-    console.log("Ustawienia zapisane!");
+    try {
+        localStorage.setItem('fnufSettings', JSON.stringify(GameState.settings));
+        console.log('Ustawienia zapisane');
+    } catch (e) {
+        console.error('Błąd zapisywania ustawień:', e);
+    }
 }
 
 function loadSettings() {
-    const savedSettings = localStorage.getItem('fnufSettings');
-    if (savedSettings) {
-        try {
-            const settings = JSON.parse(savedSettings);
-            gameState.soundVolume = settings.soundVolume || 70;
-            gameState.soundEffects = settings.soundEffects !== undefined ? settings.soundEffects : true;
-            gameState.backgroundMusic = settings.backgroundMusic !== undefined ? settings.backgroundMusic : true;
-            gameState.screenShake = settings.screenShake !== undefined ? settings.screenShake : true;
-            gameState.theme = settings.theme || 'green';
-            
-            console.log("Ustawienia załadowane!");
-        } catch (e) {
-            console.error("Błąd ładowania ustawień:", e);
+    try {
+        const savedSettings = localStorage.getItem('fnufSettings');
+        if (savedSettings) {
+            GameState.settings = JSON.parse(savedSettings);
+            console.log('Ustawienia załadowane');
         }
+    } catch (e) {
+        console.error('Błąd ładowania ustawień:', e);
     }
 }
 
-function resetProgress() {
-    if (confirm("Czy na pewno chcesz zresetować cały postęp gry? Ta akcja jest nieodwracalna!")) {
+function saveGameProgress() {
+    try {
+        // Zapisz ogólny postęp
+        localStorage.setItem('fnufProgress', JSON.stringify({
+            playerMoney: GameState.playerMoney,
+            totalNightsCompleted: GameState.totalNightsCompleted,
+            ...GameState.progress
+        }));
+        
+        // Zapisz ostatnią grę
+        localStorage.setItem('fnufLastPlayed', JSON.stringify({
+            version: gameVersion,
+            night: GameState.currentNight
+        }));
+        
+        console.log('Postęp gry zapisany');
+    } catch (e) {
+        console.error('Błąd zapisywania postępu:', e);
+    }
+}
+
+function manualSave() {
+    saveGameProgress();
+    saveSettings();
+    showGameHint('Gra zapisana pomyślnie');
+}
+
+function deleteSave() {
+    if (confirm('Czy na pewno chcesz usunąć wszystkie zapisy gry? Tej akcji nie można cofnąć!')) {
         localStorage.removeItem('fnufProgress');
-        gameState.currentNight = 1;
-        gameState.playerMoney = 0;
-        gameState.totalNightsCompleted = 0;
-        document.getElementById('mini-game-btn').style.display = 'none';
-        showMessage("Postęp gry zresetowany!");
-        console.log("Postęp gry zresetowany!");
+        localStorage.removeItem('fnufSettings');
+        localStorage.removeItem('fnufLastPlayed');
+        localStorage.removeItem('fnufMinigames');
+        
+        // Reset stanu gry
+        GameState.playerMoney = 0;
+        GameState.totalNightsCompleted = 0;
+        GameState.progress = {
+            fnuf1: { nightsCompleted: 0, customNightBest: 0, jumpscares: 0, minigames: {} },
+            fnuf2: { nightsCompleted: 0, customNightBest: 0, jumpscares: 0, minigames: {} },
+            fnuf3: { nightsCompleted: 0, customNightBest: 0, jumpscares: 0, minigames: {} }
+        };
+        
+        // Reset minigier
+        Object.keys(Minigames).forEach(key => {
+            Minigames[key].highScore = 0;
+            Minigames[key].unlocked = false;
+        });
+        
+        showGameHint('Wszystkie zapisy gry zostały usunięte');
     }
 }
 
-// EASTER EGGI
-// -----------
-function setupEasterEggs() {
-    // Plakat - kliknięcie odkrywa tajny kod
-    document.getElementById('poster').addEventListener('click', function() {
-        if (gameState.gameActive && !gameState.gamePaused) {
-            showMessage("Znalazłeś easter egga!\nTajny kod: FNUF2023\nUżyj tego kodu w menu głównym dla specjalnej nagrody!");
-            playSound('success');
-            
-            // Odblokuj coś specjalnego
-            localStorage.setItem('fnufSecretCode', 'FNUF2023');
-        }
-    });
+// ANIMACJE MENU
+// =============
+
+function startMenuAnimations() {
+    // Animacja 3D modeli w tle
+    const bolt3d = document.getElementById('bolt-3d');
+    const fox3d = document.getElementById('fox-3d');
     
-    // Kubek - kliknięcie dodaje trochę energii
-    document.getElementById('cup').addEventListener('click', function() {
-        if (gameState.gameActive && !gameState.gamePaused && !gameState.isPowerOut) {
-            gameState.power = Math.min(100, gameState.power + 5);
-            updateUI();
-            showMessage("Znaleziono kawę! +5% energii!");
-            playSound('success');
+    if (bolt3d && fox3d) {
+        let rotation = 0;
+        
+        function animateMenu() {
+            rotation += 0.5;
+            
+            bolt3d.style.transform = `rotateY(${rotation}deg)`;
+            fox3d.style.transform = `rotateY(${-rotation}deg)`;
+            
+            requestAnimationFrame(animateMenu);
         }
-    });
+        
+        animateMenu();
+    }
 }
 
-function checkSecretCode() {
-    // Sprawdź sekretny kod FNUF2023
-    const secretCode = localStorage.getItem('fnufSecretCode');
-    if (secretCode === 'FNUF2023') {
-        // Odblokuj specjalną noc 6
-        const nightSelect = document.querySelector('.night-buttons');
-        if (!document.querySelector('.night-btn[data-night="6"]')) {
-            const night6Btn = document.createElement('button');
-            night6Btn.className = 'night-btn';
-            night6Btn.setAttribute('data-night', '6');
-            night6Btn.textContent = 'Noc 6';
-            night6Btn.addEventListener('click', function() {
-                const night = parseInt(this.getAttribute('data-night'));
-                startNight(night);
-            });
-            nightSelect.appendChild(night6Btn);
-            
-            showMessage("Odblokowano specjalną noc 6!");
-            localStorage.removeItem('fnufSecretCode'); // Usuń kod, aby nie można było go użyć ponownie
+function updateMenuUI() {
+    // Aktualizuj informacje o postępie
+    const progress = GameState.progress[`fnuf${gameVersion}`];
+    const nightsCompleted = progress?.nightsCompleted || 0;
+    
+    // Aktualizuj podpowiedź
+    const hintText = document.getElementById('menu-hint-text');
+    if (nightsCompleted > 0) {
+        hintText.textContent = `Ukończono ${nightsCompleted}/5 nocy w FNUF ${gameVersion}. Całkowity zarobek: $${GameState.playerMoney.toFixed(2)}`;
+    } else {
+        hintText.textContent = 'Wybierz wersję gry i kliknij NOWA GRA aby rozpocząć';
+    }
+}
+
+// STEROWANIE KLAWIATURĄ
+// =====================
+
+function handleKeyDown(e) {
+    const key = e.key.toUpperCase();
+    
+    // Minigra aktywna
+    if (minigameActive) {
+        handleMinigameKey(key, true);
+        return;
+    }
+    
+    // Gra aktywna
+    if (GameState.gameActive && !GameState.gamePaused && !GameState.jumpscareActive) {
+        // Pobierz keybinds z ustawień
+        const keybinds = GameState.settings.controls.keybinds;
+        
+        // Sprawdź czy to keybind
+        if (key === keybinds.cameras) {
+            toggleCameras();
+        } else if (key === keybinds.leftDoor) {
+            toggleLeftDoor();
+        } else if (key === keybinds.rightDoor) {
+            toggleRightDoor();
+        } else if (key === keybinds.leftLight) {
+            toggleLeftLight();
+        } else if (key === keybinds.rightLight) {
+            toggleRightLight();
+        } else if (key === ' ' && keybinds.buzzer === ' ') {
+            useBuzzer();
+        } else if (key === keybinds.map) {
+            showMap();
+        } else if (key === keybinds.pause) {
+            togglePause();
+        }
+        
+        // Szybkie przełączanie kamer (tylko gdy kamery aktywne)
+        if (GameState.camerasActive) {
+            const cameraKey = parseInt(key);
+            if (!isNaN(cameraKey) && cameraKey >= 1 && cameraKey <= 9) {
+                switchCamera(cameraKey);
+            } else if (key === '0') {
+                switchCamera(10);
+            } else if (key === '-') {
+                switchCamera(11);
+            } else if (key === '=') {
+                switchCamera(12);
+            }
         }
     }
+    
+    // Easter egg: sekretny kod
+    if (key === 'F') {
+        checkSecretCode();
+    }
+}
+
+function handleKeyUp(e) {
+    const key = e.key.toUpperCase();
+    
+    if (minigameActive) {
+        handleMinigameKey(key, false);
+    }
+}
+
+function handleMinigameKey(key, isKeyDown) {
+    const keybinds = GameState.settings.controls.minigameBinds;
+    
+    // Implementacja sterowania dla minigier
+    // (w pełnej wersji byłaby bardziej zaawansowana)
 }
 
 // POMOCNICZE FUNKCJE
-// ------------------
-function applyTheme(theme) {
-    // Usuń wszystkie klasy tematyczne
-    document.body.classList.remove('theme-green', 'theme-blue', 'theme-red', 'theme-purple');
-    
-    // Dodaj wybraną klasę
-    document.body.classList.add(`theme-${theme}`);
-    
-    // Zastosuj kolory dla wybranego motywu
-    let primaryColor, secondaryColor;
-    
-    switch(theme) {
-        case 'blue':
-            primaryColor = '#00aaff';
-            secondaryColor = '#0088cc';
-            break;
-        case 'red':
-            primaryColor = '#ff3300';
-            secondaryColor = '#cc2200';
-            break;
-        case 'purple':
-            primaryColor = '#aa00ff';
-            secondaryColor = '#8800cc';
-            break;
-        default: // green
-            primaryColor = '#00ff00';
-            secondaryColor = '#00aa00';
-    }
-    
-    // Tutaj można dodać bardziej zaawansowane zmiany kolorów w CSS
-    // Dla uproszczenia zmieniamy tylko kilka podstawowych elementów
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-    document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+// ==================
+
+function clearAllTimers() {
+    clearInterval(gameTimer);
+    clearInterval(animatronicTimer);
+    clearTimeout(powerOutTimer);
+    clearTimeout(nightCompletionTimer);
+    clearInterval(minigameInterval);
+    clearInterval(cameraFeedInterval);
 }
 
-function showMessage(message) {
-    // Prosta funkcja do wyświetlania wiadomości
-    alert(message);
+function resetAnimatronics() {
+    Object.keys(activeAnimatronics).forEach(key => {
+        if (activeAnimatronics[key]) {
+            activeAnimatronics[key].position = activeAnimatronics[key].movementPattern[0];
+        }
+    });
+}
+
+function showAnimatronicInOffice(animatronic, side) {
+    const modelId = `${animatronic.model.toLowerCase().replace(/\s/g, '-')}-3d`;
+    const model = document.getElementById(modelId);
+    
+    if (model) {
+        model.style.display = 'block';
+        
+        if (side === 'left') {
+            model.style.left = '15%';
+            model.style.right = 'auto';
+        } else {
+            model.style.right = '15%';
+            model.style.left = 'auto';
+        }
+    }
+}
+
+function hideAnimatronicInOffice(animatronic) {
+    const modelId = `${animatronic.model.toLowerCase().replace(/\s/g, '-')}-3d`;
+    const model = document.getElementById(modelId);
+    
+    if (model) {
+        model.style.display = 'none';
+    }
+}
+
+function checkSecretCode() {
+    // Sekretny kod FNUF2023
+    const secretCode = 'FNUF2023';
+    const savedCode = localStorage.getItem('fnufSecretCode');
+    
+    if (savedCode === secretCode) {
+        // Odblokuj specjalną noc
+        const nightSelect = document.querySelector('.night-grid');
+        if (!document.querySelector('.night-card[data-night="7"]')) {
+            const specialNight = document.createElement('div');
+            specialNight.className = 'night-card';
+            specialNight.setAttribute('data-night', '7');
+            specialNight.innerHTML = `
+                <div class="night-number">7</div>
+                <div class="night-difficulty">SEKRETNA</div>
+                <div class="night-desc">Noc specjalna</div>
+                <div class="night-badge"><i class="fas fa-crown"></i></div>
+            `;
+            
+            specialNight.addEventListener('click', () => startNight(7));
+            nightSelect.appendChild(specialNight);
+            
+            showGameHint('Odblokowano sekretną noc 7!');
+            localStorage.removeItem('fnufSecretCode');
+        }
+    }
 }
 
 // INICJALIZACJA PO ZAŁADOWANIU STRONY
-// ------------------------------------
+// ====================================
+
 window.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM załadowany, inicjalizacja gry...");
+    console.log('=== FNUF ULTIMATE FEAR COLLECTION ===');
+    console.log('Wersja: 1.0 | Build: 2023.12.09');
+    console.log('Autor: Ultimate Fear Studio');
     
-    // Dodaj klasy tematyczne do CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        .theme-blue .menu-btn:hover { background: linear-gradient(to bottom, #0066aa, #003366); }
-        .theme-red .menu-btn:hover { background: linear-gradient(to bottom, #aa3300, #662200); }
-        .theme-purple .menu-btn:hover { background: linear-gradient(to bottom, #6600aa, #330066); }
-        
-        .theme-blue #title { color: #00aaff; text-shadow: 0 0 20px #00aaff; }
-        .theme-red #title { color: #ff3300; text-shadow: 0 0 20px #ff3300; }
-        .theme-purple #title { color: #aa00ff; text-shadow: 0 0 20px #aa00ff; }
-    `;
-    document.head.appendChild(style);
-    
-    // Inicjalizuj grę
+    // Rozpocznij inicjalizację gry
     initGame();
-    
-    // Dodaj efekt pisania do tytułu
-    const title = document.getElementById('title');
-    const subtitle = document.getElementById('subtitle');
-    const originalTitle = title.textContent;
-    const originalSubtitle = subtitle.textContent;
-    
-    title.textContent = '';
-    subtitle.textContent = '';
-    
-    let i = 0;
-    function typeWriterTitle() {
-        if (i < originalTitle.length) {
-            title.textContent += originalTitle.charAt(i);
-            i++;
-            setTimeout(typeWriterTitle, 100);
-        } else {
-            // Po zakończeniu pisania tytułu, zacznij pisać podtytuł
-            i = 0;
-            setTimeout(typeWriterSubtitle, 500);
-        }
-    }
-    
-    function typeWriterSubtitle() {
-        if (i < originalSubtitle.length) {
-            subtitle.textContent += originalSubtitle.charAt(i);
-            i++;
-            setTimeout(typeWriterSubtitle, 50);
-        }
-    }
-    
-    setTimeout(typeWriterTitle, 500);
-    
-    console.log("Gra FNUF gotowa do rozpoczęcia!");
 });
+
+// Eksport do global scope dla debugowania
+window.GameState = GameState;
+window.AnimatronicsFNUF1 = AnimatronicsFNUF1;
+window.Minigames = Minigames;
