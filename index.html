@@ -134,6 +134,12 @@
                         <div class="night-desc">Noc dla mistrzów</div>
                         <div class="night-badge"><i class="fas fa-skull"></i></div>
                     </div>
+                    
+                    <div class="night-card custom" onclick="showCustomNight()">
+                        <div class="night-number"><i class="fas fa-sliders-h"></i></div>
+                        <div class="night-difficulty">WŁASNA</div>
+                        <div class="night-desc">Dostosuj trudność</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -238,6 +244,20 @@
                             <div class="option-control">
                                 <label class="switch">
                                     <input type="checkbox" id="screen-shake" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option toggle">
+                            <div class="option-label">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Efekty świetlne</span>
+                                <div class="option-desc">Dynamiczne oświetlenie i cienie</div>
+                            </div>
+                            <div class="option-control">
+                                <label class="switch">
+                                    <input type="checkbox" id="light-effects" checked>
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -367,6 +387,7 @@
                                     <option value="easy">ŁATWY</option>
                                     <option value="normal" selected>NORMALNY</option>
                                     <option value="hard">TRUDNY</option>
+                                    <option value="nightmare">KOSZMAR</option>
                                 </select>
                             </div>
                         </div>
@@ -381,6 +402,20 @@
                                     <option value="low">NISKIE</option>
                                     <option value="normal" selected>NORMALNE</option>
                                     <option value="high">WYSOKIE</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option">
+                            <div class="option-label">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Szybkość animatroników</span>
+                            </div>
+                            <div class="option-control">
+                                <select id="anim-speed">
+                                    <option value="slow">WOLNA</option>
+                                    <option value="normal" selected>NORMALNA</option>
+                                    <option value="fast">SZYBKA</option>
                                 </select>
                             </div>
                         </div>
@@ -479,6 +514,7 @@
                                     <option value="blue">NIEBIESKI</option>
                                     <option value="red">CZERWONY</option>
                                     <option value="purple">FIOLETOWY</option>
+                                    <option value="gold">ZŁOTY</option>
                                 </select>
                             </div>
                         </div>
@@ -519,7 +555,17 @@
             <div class="office-container">
                 <!-- Lewe drzwi -->
                 <div class="office-door left-door" id="left-door">
-                    <div class="door-visual"></div>
+                    <div class="door-visual">
+                        <div class="door-frame"></div>
+                        <div class="door-handle"></div>
+                        <div class="door-window" id="left-window">
+                            <div class="window-glass"></div>
+                            <div class="window-frame"></div>
+                            <div class="window-view" id="left-window-view">
+                                <!-- Animatronik za oknem -->
+                            </div>
+                        </div>
+                    </div>
                     <div class="door-button" id="left-door-button" title="Lewe drzwi (L)">
                         <div class="button-light"></div>
                         <div class="button-label">LEWE DRZWI</div>
@@ -528,7 +574,17 @@
                 
                 <!-- Prawe drzwi -->
                 <div class="office-door right-door" id="right-door">
-                    <div class="door-visual"></div>
+                    <div class="door-visual">
+                        <div class="door-frame"></div>
+                        <div class="door-handle"></div>
+                        <div class="door-window" id="right-window">
+                            <div class="window-glass"></div>
+                            <div class="window-frame"></div>
+                            <div class="window-view" id="right-window-view">
+                                <!-- Animatronik za oknem -->
+                            </div>
+                        </div>
+                    </div>
                     <div class="door-button" id="right-door-button" title="Prawe drzwi (R)">
                         <div class="button-light"></div>
                         <div class="button-label">PRAWE DRZWI</div>
@@ -537,12 +593,18 @@
                 
                 <!-- Światło lewe -->
                 <div class="office-light left-light" id="left-light">
-                    <div class="light-visual"></div>
+                    <div class="light-visual">
+                        <div class="light-beam" id="left-light-beam"></div>
+                        <div class="light-source"></div>
+                    </div>
                 </div>
                 
                 <!-- Światło prawe -->
                 <div class="office-light right-light" id="right-light">
-                    <div class="light-visual"></div>
+                    <div class="light-visual">
+                        <div class="light-beam" id="right-light-beam"></div>
+                        <div class="light-source"></div>
+                    </div>
                 </div>
                 
                 <!-- Dzwonek -->
@@ -555,7 +617,10 @@
                 
                 <!-- Kamera monitor -->
                 <div class="office-monitor" id="desk-monitor">
-                    <div class="monitor-screen"></div>
+                    <div class="monitor-screen" id="desk-monitor-screen">
+                        <div class="monitor-static"></div>
+                        <div class="monitor-feed"></div>
+                    </div>
                     <div class="monitor-stand"></div>
                 </div>
                 
@@ -574,12 +639,18 @@
                 
                 <!-- Animatroniki (ukryte na start) -->
                 <div class="animatronic-display" id="bolt-bear-display">
-                    <div class="animatronic-icon">⚡</div>
+                    <div class="animatronic-model">
+                        <div class="animatronic-icon">⚡</div>
+                        <div class="animatronic-glow"></div>
+                    </div>
                     <div class="animatronic-name">BOLT BEAR</div>
                 </div>
                 
                 <div class="animatronic-display" id="sparky-fox-display">
-                    <div class="animatronic-icon">🦊</div>
+                    <div class="animatronic-model">
+                        <div class="animatronic-icon">🦊</div>
+                        <div class="animatronic-glow"></div>
+                    </div>
                     <div class="animatronic-name">SPARKY FOX</div>
                 </div>
             </div>
@@ -663,7 +734,7 @@
         </div>
         
         <!-- HUD - różne tryby -->
-        <div id="game-hud" class="hud-mode-classic hud-size-medium">
+        <div id="game-hud" class="hud-mode-classic hud-size-medium hud-theme-green">
             <div class="hud-top">
                 <div class="hud-left">
                     <div class="resource-display">
@@ -676,7 +747,7 @@
                                 <div class="resource-value" id="hud-power">100%</div>
                             </div>
                             <div class="resource-bar">
-                                <div class="bar-fill power" id="power-bar-fill"></div>
+                                <div class="bar-fill power" id="power-bar-fill" style="width: 100%"></div>
                             </div>
                         </div>
                         
@@ -909,6 +980,75 @@
         </div>
     </div>
 
+    <!-- Minigra: Naprawa wentylacji -->
+    <div id="minigame-vent" class="screen minigame-screen">
+        <div class="minigame-container">
+            <div class="minigame-header">
+                <h2><i class="fas fa-fan"></i> NAPRAWA WENTYLACJI</h2>
+                <div class="minigame-info">
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="vent-time">60</span>s
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-tools"></i>
+                        <span id="vent-repairs">0</span>/10
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-skull"></i>
+                        <span id="vent-threat">3</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="minigame-viewport">
+                <div class="vent-system">
+                    <div class="vent-tunnel" id="vent-tunnel">
+                        <!-- Tunel wentylacyjny z uszkodzeniami -->
+                    </div>
+                    <div class="player-character" id="vent-player">
+                        <div class="character-icon"><i class="fas fa-user"></i></div>
+                    </div>
+                    <div class="animatronic-threat" id="vent-animatronic">
+                        <div class="threat-icon"><i class="fas fa-robot"></i></div>
+                    </div>
+                    <div class="repair-points">
+                        <!-- Punkty napraw będą dodawane dynamicznie -->
+                    </div>
+                </div>
+                
+                <div class="minigame-controls">
+                    <div class="control-info">
+                        <h4><i class="fas fa-info-circle"></i> STEROWANIE</h4>
+                        <p>Użyj strzałek ← → aby się poruszać</p>
+                        <p>SPACJA aby naprawić uszkodzenie</p>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button class="minigame-btn move-left">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button class="minigame-btn repair">
+                            <i class="fas fa-wrench"></i>
+                        </button>
+                        <button class="minigame-btn move-right">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="minigame-footer">
+                <button class="menu-btn" id="vent-back">
+                    <i class="fas fa-times"></i> WYJŚCIE
+                </button>
+                <button class="menu-btn primary" id="vent-start">
+                    <i class="fas fa-play"></i> ROZPOCZNIJ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Ekran minigier -->
     <div id="minigames-screen" class="screen">
         <div class="minigames-container">
@@ -926,13 +1066,47 @@
                     </div>
                     <div class="minigame-info">
                         <h3>NAPRAWA WENTYLACJI</h3>
-                        <p>Napraw system wentylacji przed atakiem animatroników</p>
+                        <p>Napraw system wentylacji przed atakiem animatroników. Poruszaj się po tunelach i napraw 10 uszkodzeń w 60 sekund.</p>
                         <div class="minigame-stats">
                             <span class="stat"><i class="fas fa-star"></i> WYMAGANA 1 NOC</span>
                             <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
                         </div>
                     </div>
                     <button class="play-minigame-btn" data-game="ventRepair">
+                        <i class="fas fa-play"></i> GRAJ
+                    </button>
+                </div>
+                
+                <div class="minigame-card" data-game="pizzaChallenge">
+                    <div class="minigame-icon">
+                        <i class="fas fa-pizza-slice"></i>
+                    </div>
+                    <div class="minigame-info">
+                        <h3>WYZWANIE PIZZY</h3>
+                        <p>Przygotuj pizze dla głodnych klientów. Uważaj na animatroniki!</p>
+                        <div class="minigame-stats">
+                            <span class="stat"><i class="fas fa-star"></i> WYMAGANA 3 NOC</span>
+                            <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
+                        </div>
+                    </div>
+                    <button class="play-minigame-btn" data-game="pizzaChallenge">
+                        <i class="fas fa-play"></i> GRAJ
+                    </button>
+                </div>
+                
+                <div class="minigame-card" data-game="memoryGame">
+                    <div class="minigame-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="minigame-info">
+                        <h3>TEST PAMIĘCI</h3>
+                        <p>Zapamiętaj sekwencje dźwięków i ruchów animatroników.</p>
+                        <div class="minigame-stats">
+                            <span class="stat"><i class="fas fa-star"></i> WYMAGANA 2 NOC</span>
+                            <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
+                        </div>
+                    </div>
+                    <button class="play-minigame-btn" data-game="memoryGame">
                         <i class="fas fa-play"></i> GRAJ
                     </button>
                 </div>
