@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Oxanium:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* 3D efekty dla animatroników */
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=MedievalSharp&display=swap');
     </style>
 </head>
@@ -64,28 +63,6 @@
                             <span><i class="fas fa-robot"></i> 5 animatroników</span>
                         </div>
                     </div>
-                    
-                    <div class="version-description" id="desc-2">
-                        <h3><i class="fas fa-mask"></i> FNUF 2: Nowe Zagrożenie</h3>
-                        <p>Nowa placówka z wentylacją i maską. Animatroniki atakują z nowych kierunków!</p>
-                        <div class="version-features">
-                            <span><i class="fas fa-wind"></i> System wentylacji</span>
-                            <span><i class="fas fa-theater-masks"></i> Mechanika maski</span>
-                            <span><i class="fas fa-music"></i> Bujający muzyk box</span>
-                            <span><i class="fas fa-robot"></i> 8 animatroników</span>
-                        </div>
-                    </div>
-                    
-                    <div class="version-description" id="desc-3">
-                        <h3><i class="fas fa-fire"></i> FNUF 3: Fazbear's Fright</h3>
-                        <p>Horror atrakcji z jednym animatronikiem. System audio i wentylacji to klucz do przeżycia.</p>
-                        <div class="version-features">
-                            <span><i class="fas fa-volume-up"></i> System audio</span>
-                            <span><i class="fas fa-fan"></i> System wentylacji</span>
-                            <span><i class="fas fa-ghost"></i> Jeden główny animatronik</span>
-                            <span><i class="fas fa-video"></i> Zaawansowane kamery</span>
-                        </div>
-                    </div>
                 </div>
             </div>
             
@@ -117,7 +94,7 @@
                 </button>
             </div>
             
-            <!-- Night Select (ukryte na starcie) -->
+            <!-- Night Select -->
             <div id="night-select" class="night-select">
                 <div class="select-header">
                     <h3><i class="fas fa-moon"></i> WYBIERZ NOC</h3>
@@ -157,46 +134,6 @@
                         <div class="night-desc">Noc dla mistrzów</div>
                         <div class="night-badge"><i class="fas fa-skull"></i></div>
                     </div>
-                    
-                    <div class="night-card custom-night" id="custom-night-btn">
-                        <div class="night-number"><i class="fas fa-sliders-h"></i></div>
-                        <div class="night-difficulty">WŁASNA</div>
-                        <div class="night-desc">Dostosuj trudność</div>
-                    </div>
-                </div>
-                
-                <div class="custom-night-panel" id="custom-night-panel">
-                    <h4><i class="fas fa-tools"></i> DOSTOSUJ TRUDNOŚĆ</h4>
-                    
-                    <div class="difficulty-sliders">
-                        <div class="slider-group">
-                            <label>Bolt Bear AI:</label>
-                            <input type="range" class="ai-slider" data-animatronic="boltBear" min="0" max="20" value="10">
-                            <span class="slider-value">10</span>
-                        </div>
-                        
-                        <div class="slider-group">
-                            <label>Sparky Fox AI:</label>
-                            <input type="range" class="ai-slider" data-animatronic="sparkyFox" min="0" max="20" value="10">
-                            <span class="slider-value">10</span>
-                        </div>
-                        
-                        <div class="slider-group">
-                            <label>Chica Chick AI:</label>
-                            <input type="range" class="ai-slider" data-animatronic="chicaChick" min="0" max="20" value="10">
-                            <span class="slider-value">10</span>
-                        </div>
-                        
-                        <div class="slider-group">
-                            <label>Fang Pirate AI:</label>
-                            <input type="range" class="ai-slider" data-animatronic="fangPirate" min="0" max="20" value="10">
-                            <span class="slider-value">10</span>
-                        </div>
-                    </div>
-                    
-                    <button class="menu-btn" id="start-custom-night">
-                        <i class="fas fa-play"></i> ROZPOCZNIJ WŁASNĄ NOC
-                    </button>
                 </div>
             </div>
         </div>
@@ -210,26 +147,6 @@
             <div class="menu-hint">
                 <i class="fas fa-info-circle"></i>
                 <span id="menu-hint-text">Wybierz wersję gry i kliknij NOWA GRA aby rozpocząć</span>
-            </div>
-        </div>
-        
-        <!-- 3D Animatroniki w tle menu -->
-        <div class="menu-3d-background">
-            <div class="animatronic-3d" id="bolt-3d">
-                <div class="animatronic-model">
-                    <div class="model-body"></div>
-                    <div class="model-head"></div>
-                    <div class="model-arm left"></div>
-                    <div class="model-arm right"></div>
-                </div>
-            </div>
-            
-            <div class="animatronic-3d" id="fox-3d">
-                <div class="animatronic-model">
-                    <div class="model-body"></div>
-                    <div class="model-head"></div>
-                    <div class="model-tail"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -249,6 +166,7 @@
                 <button class="settings-tab" data-tab="graphics">GRAFIKA</button>
                 <button class="settings-tab" data-tab="controls">STEROWANIE</button>
                 <button class="settings-tab" data-tab="gameplay">ROZGRYWKA</button>
+                <button class="settings-tab" data-tab="hud">HUD</button>
             </div>
             
             <div class="settings-content">
@@ -289,49 +207,6 @@
                                 <span class="value-display" id="sfx-volume-value">80%</span>
                             </div>
                         </div>
-                        
-                        <div class="setting-option">
-                            <div class="option-label">
-                                <i class="fas fa-robot"></i>
-                                <span>Dźwięki animatroników</span>
-                            </div>
-                            <div class="option-control">
-                                <input type="range" id="animatronic-volume" min="0" max="100" value="90">
-                                <span class="value-display" id="animatronic-volume-value">90%</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h3><i class="fas fa-headphones"></i> USTAWIENIA AUDIO</h3>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-volume-mute"></i>
-                                <span>Wycisz dźwięk jumpscare</span>
-                                <div class="option-desc">Ostrzeżenie: wyłączenie może zmniejszyć immersję</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="mute-jumpscares">
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-static"></i>
-                                <span>Efekty statyczne</span>
-                                <div class="option-desc">Dźwięki szumu i zakłóceń</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="static-effects" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -344,77 +219,13 @@
                             <div class="option-label">
                                 <i class="fas fa-image"></i>
                                 <span>Jakość tekstur</span>
-                                <div class="option-desc">Wpływa na wygląd pomieszczeń i animatroników</div>
                             </div>
                             <div class="option-control">
                                 <select id="texture-quality">
                                     <option value="low">NISKA</option>
                                     <option value="medium" selected>ŚREDNIA</option>
                                     <option value="high">WYSOKA</option>
-                                    <option value="ultra">ULTRA</option>
                                 </select>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option">
-                            <div class="option-label">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>Efekty oświetlenia</span>
-                                <div class="option-desc">Cienie i efekty świetlne</div>
-                            </div>
-                            <div class="option-control">
-                                <select id="lighting-quality">
-                                    <option value="low">NISKA</option>
-                                    <option value="medium" selected>ŚREDNIA</option>
-                                    <option value="high">WYSOKA</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option">
-                            <div class="option-label">
-                                <i class="fas fa-eye"></i>
-                                <span>Renderowanie 3D</span>
-                                <div class="option-desc">Jakość modeli animatroników</div>
-                            </div>
-                            <div class="option-control">
-                                <select id="render-quality">
-                                    <option value="low">2D SPRITE'Y</option>
-                                    <option value="medium" selected>3D PODSTAWOWE</option>
-                                    <option value="high">3D ZAAWANSOWANE</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h3><i class="fas fa-cube"></i> EFEKTY WIZUALNE</h3>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-film"></i>
-                                <span>Efekty filmowe</span>
-                                <div class="option-desc">Ziarno filmowe i wintage efekty</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="film-effects" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-water"></i>
-                                <span>Efekty soczewki</span>
-                                <div class="option-desc">Zniekształcenia soczewki kamery</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="lens-effects">
-                                    <span class="slider"></span>
-                                </label>
                             </div>
                         </div>
                         
@@ -535,25 +346,7 @@
                                         <span class="binding-label">STRZELAJ</span>
                                         <button class="keybind-btn small" data-action="miniShoot">SPACJA</button>
                                     </div>
-                                    <div class="binding-item">
-                                        <span class="binding-label">PAUZA</span>
-                                        <button class="keybind-btn small" data-action="miniPause">ESC</button>
-                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-mouse-pointer"></i>
-                                <span>Sterowanie myszą w minigrze</span>
-                                <div class="option-desc">Umożliwia sterowanie za pomocą myszy</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="mouse-control">
-                                    <span class="slider"></span>
-                                </label>
                             </div>
                         </div>
                     </div>
@@ -568,14 +361,12 @@
                             <div class="option-label">
                                 <i class="fas fa-moon"></i>
                                 <span>Poziom trudności</span>
-                                <div class="option-desc">Wpływa na AI animatroników</div>
                             </div>
                             <div class="option-control">
                                 <select id="difficulty-level">
                                     <option value="easy">ŁATWY</option>
                                     <option value="normal" selected>NORMALNY</option>
                                     <option value="hard">TRUDNY</option>
-                                    <option value="nightmare">KOSZMAR</option>
                                 </select>
                             </div>
                         </div>
@@ -584,82 +375,19 @@
                             <div class="option-label">
                                 <i class="fas fa-bolt"></i>
                                 <span>Zużycie energii</span>
-                                <div class="option-desc">Szybkość spadku energii</div>
                             </div>
                             <div class="option-control">
                                 <select id="power-drain">
                                     <option value="low">NISKIE</option>
                                     <option value="normal" selected>NORMALNE</option>
                                     <option value="high">WYSOKIE</option>
-                                    <option value="extreme">EKSTREMALNE</option>
                                 </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h3><i class="fas fa-eye"></i> INTERFEJS</h3>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>Ostrzeżenia dźwiękowe</span>
-                                <div class="option-desc">Dźwięki ostrzegawcze od animatroników</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="audio-warnings" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-map-signs"></i>
-                                <span>Podpowiedzi interfejsu</span>
-                                <div class="option-desc">Podświetlanie interaktywnych elementów</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="interface-hints" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-option toggle">
-                            <div class="option-label">
-                                <i class="fas fa-clock"></i>
-                                <span>Timer nocny</span>
-                                <div class="option-desc">Pokazuje pozostały czas do 6:00 AM</div>
-                            </div>
-                            <div class="option-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="night-timer" checked>
-                                    <span class="slider"></span>
-                                </label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="settings-group">
                         <h3><i class="fas fa-save"></i> ZAPIS GRY</h3>
-                        
-                        <div class="setting-option">
-                            <div class="option-label">
-                                <i class="fas fa-hdd"></i>
-                                <span>Autozapis</span>
-                                <div class="option-desc">Automatycznie zapisuje postęp po każdej nocy</div>
-                            </div>
-                            <div class="option-control">
-                                <select id="autosave-frequency">
-                                    <option value="none">WYŁĄCZONY</option>
-                                    <option value="night" selected>PO KAŻDEJ NOCY</option>
-                                    <option value="hour">CO GODZINĘ</option>
-                                </select>
-                            </div>
-                        </div>
                         
                         <div class="save-controls">
                             <button class="menu-btn" id="manual-save">
@@ -668,6 +396,102 @@
                             <button class="menu-btn danger" id="delete-save">
                                 <i class="fas fa-trash"></i> USUŃ ZAPIS GRY
                             </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Zakładka HUD -->
+                <div class="settings-tab-content" id="tab-hud">
+                    <div class="settings-group">
+                        <h3><i class="fas fa-tachometer-alt"></i> WYGLĄD HUD</h3>
+                        
+                        <div class="setting-option">
+                            <div class="option-label">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Tryb HUD</span>
+                                <div class="option-desc">Wygląd interfejsu w grze</div>
+                            </div>
+                            <div class="option-control">
+                                <select id="hud-mode">
+                                    <option value="modern">MODERN</option>
+                                    <option value="classic" selected>CLASSIC</option>
+                                    <option value="minimal">MINIMAL</option>
+                                    <option value="detailed">DETAILED</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option">
+                            <div class="option-label">
+                                <i class="fas fa-expand-alt"></i>
+                                <span>Wielkość HUD</span>
+                                <div class="option-desc">Rozmiar elementów interfejsu</div>
+                            </div>
+                            <div class="option-control">
+                                <select id="hud-size">
+                                    <option value="small">MAŁY</option>
+                                    <option value="medium" selected>ŚREDNI</option>
+                                    <option value="large">DUŻY</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option toggle">
+                            <div class="option-label">
+                                <i class="fas fa-eye"></i>
+                                <span>Pokazuj podpowiedzi</span>
+                                <div class="option-desc">Wyświetlaj podpowiedzi w grze</div>
+                            </div>
+                            <div class="option-control">
+                                <label class="switch">
+                                    <input type="checkbox" id="show-hints" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option toggle">
+                            <div class="option-label">
+                                <i class="fas fa-bolt"></i>
+                                <span>Animacje HUD</span>
+                                <div class="option-desc">Animowane elementy interfejsu</div>
+                            </div>
+                            <div class="option-control">
+                                <label class="switch">
+                                    <input type="checkbox" id="hud-animations" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3><i class="fas fa-palette"></i> KOLORYSTYKA</h3>
+                        
+                        <div class="setting-option">
+                            <div class="option-label">
+                                <i class="fas fa-fill-drip"></i>
+                                <span>Motyw kolorów</span>
+                            </div>
+                            <div class="option-control">
+                                <select id="hud-theme">
+                                    <option value="green" selected>ZIELONY</option>
+                                    <option value="blue">NIEBIESKI</option>
+                                    <option value="red">CZERWONY</option>
+                                    <option value="purple">FIOLETOWY</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-option">
+                            <div class="option-label">
+                                <i class="fas fa-adjust"></i>
+                                <span>Przezroczystość HUD</span>
+                            </div>
+                            <div class="option-control">
+                                <input type="range" id="hud-opacity" min="20" max="100" value="90">
+                                <span class="value-display" id="hud-opacity-value">90%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -691,159 +515,77 @@
         
         <!-- Główny widok biura -->
         <div id="office-view">
-            <!-- 3D Elementy biura -->
-            <div class="office-3d">
-                <!-- Ściany -->
-                <div class="office-wall back"></div>
-                <div class="office-wall left"></div>
-                <div class="office-wall right"></div>
-                <div class="office-floor"></div>
-                <div class="office-ceiling"></div>
-                
-                <!-- Elementy dekoracyjne -->
-                <div class="office-poster" style="transform: translateZ(10px) rotateY(-5deg);">
-                    <div class="poster-image" id="poster-1"></div>
-                    <div class="poster-frame"></div>
-                </div>
-                
-                <div class="office-clock" style="transform: translateZ(15px);">
-                    <div class="clock-face">
-                        <div class="clock-hour"></div>
-                        <div class="clock-minute"></div>
-                    </div>
-                    <div class="clock-frame"></div>
-                </div>
-                
-                <!-- Biurko -->
-                <div class="office-desk">
-                    <div class="desk-surface"></div>
-                    <div class="desk-legs">
-                        <div class="leg"></div>
-                        <div class="leg"></div>
-                        <div class="leg"></div>
-                        <div class="leg"></div>
-                    </div>
-                    <div class="desk-items">
-                        <div class="desk-monitor">
-                            <div class="monitor-screen" id="desk-monitor-screen"></div>
-                            <div class="monitor-stand"></div>
-                        </div>
-                        <div class="desk-fan">
-                            <div class="fan-base"></div>
-                            <div class="fan-blades rotating"></div>
-                        </div>
-                        <div class="desk-cup">
-                            <div class="cup-body"></div>
-                            <div class="cup-handle"></div>
-                        </div>
+            <!-- Biuro z elementami interaktywnymi -->
+            <div class="office-container">
+                <!-- Lewe drzwi -->
+                <div class="office-door left-door" id="left-door">
+                    <div class="door-visual"></div>
+                    <div class="door-button" id="left-door-button" title="Lewe drzwi (L)">
+                        <div class="button-light"></div>
+                        <div class="button-label">LEWE DRZWI</div>
                     </div>
                 </div>
                 
-                <!-- Drzwi -->
-                <div class="office-door left-door" id="left-door-3d">
-                    <div class="door-panel"></div>
-                    <div class="door-frame"></div>
-                    <div class="door-handle"></div>
+                <!-- Prawe drzwi -->
+                <div class="office-door right-door" id="right-door">
+                    <div class="door-visual"></div>
+                    <div class="door-button" id="right-door-button" title="Prawe drzwi (R)">
+                        <div class="button-light"></div>
+                        <div class="button-label">PRAWE DRZWI</div>
+                    </div>
                 </div>
                 
-                <div class="office-door right-door" id="right-door-3d">
-                    <div class="door-panel"></div>
-                    <div class="door-frame"></div>
-                    <div class="door-handle"></div>
+                <!-- Światło lewe -->
+                <div class="office-light left-light" id="left-light">
+                    <div class="light-visual"></div>
                 </div>
                 
-                <!-- Przyciski drzwi -->
-                <div class="door-button-3d left-button" id="left-button-3d">
-                    <div class="button-base"></div>
-                    <div class="button-light"></div>
-                </div>
-                
-                <div class="door-button-3d right-button" id="right-button-3d">
-                    <div class="button-base"></div>
-                    <div class="button-light"></div>
+                <!-- Światło prawe -->
+                <div class="office-light right-light" id="right-light">
+                    <div class="light-visual"></div>
                 </div>
                 
                 <!-- Dzwonek -->
-                <div class="office-buzzer" id="buzzer-3d">
-                    <div class="buzzer-base"></div>
-                    <div class="buzzer-button"></div>
+                <div class="office-buzzer" id="buzzer" title="Dźwięk odstraszający (Spacja)">
+                    <div class="buzzer-visual">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="buzzer-label">DŹWIĘK</div>
+                </div>
+                
+                <!-- Kamera monitor -->
+                <div class="office-monitor" id="desk-monitor">
+                    <div class="monitor-screen"></div>
+                    <div class="monitor-stand"></div>
+                </div>
+                
+                <!-- Elementy dekoracyjne -->
+                <div class="office-poster" id="poster">
+                    <div class="poster-content">PLAKAT<br>FNUF</div>
+                </div>
+                
+                <div class="office-fan" id="fan">
+                    <div class="fan-blades"></div>
+                </div>
+                
+                <div class="office-cup" id="cup">
+                    <div class="cup-content">☕</div>
                 </div>
                 
                 <!-- Animatroniki (ukryte na start) -->
-                <div class="animatronic-3d-model" id="bolt-bear-3d">
-                    <div class="animatronic-body">
-                        <div class="animatronic-head">
-                            <div class="head-main">
-                                <div class="ears">
-                                    <div class="ear left"></div>
-                                    <div class="ear right"></div>
-                                </div>
-                                <div class="face">
-                                    <div class="eyes">
-                                        <div class="eye left"></div>
-                                        <div class="eye right"></div>
-                                    </div>
-                                    <div class="mouth"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="animatronic-torso">
-                            <div class="chest"></div>
-                            <div class="stomach"></div>
-                        </div>
-                        <div class="animatronic-arms">
-                            <div class="arm left"></div>
-                            <div class="arm right"></div>
-                        </div>
-                        <div class="animatronic-legs">
-                            <div class="leg left"></div>
-                            <div class="leg right"></div>
-                        </div>
-                    </div>
-                    <div class="animatronic-glow"></div>
+                <div class="animatronic-display" id="bolt-bear-display">
+                    <div class="animatronic-icon">⚡</div>
+                    <div class="animatronic-name">BOLT BEAR</div>
                 </div>
                 
-                <div class="animatronic-3d-model" id="sparky-fox-3d">
-                    <div class="animatronic-body">
-                        <div class="animatronic-head">
-                            <div class="head-main">
-                                <div class="ears">
-                                    <div class="ear left pointed"></div>
-                                    <div class="ear right pointed"></div>
-                                </div>
-                                <div class="face">
-                                    <div class="eyes">
-                                        <div class="eye left slanted"></div>
-                                        <div class="eye right slanted"></div>
-                                    </div>
-                                    <div class="snout"></div>
-                                    <div class="mouth smirk"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="animatronic-torso">
-                            <div class="chest sleek"></div>
-                        </div>
-                        <div class="animatronic-arms">
-                            <div class="arm left"></div>
-                            <div class="arm right"></div>
-                        </div>
-                        <div class="animatronic-legs">
-                            <div class="leg left"></div>
-                            <div class="leg right"></div>
-                        </div>
-                        <div class="animatronic-tail">
-                            <div class="tail-base"></div>
-                            <div class="tail-tip"></div>
-                        </div>
-                    </div>
-                    <div class="animatronic-glow orange"></div>
+                <div class="animatronic-display" id="sparky-fox-display">
+                    <div class="animatronic-icon">🦊</div>
+                    <div class="animatronic-name">SPARKY FOX</div>
                 </div>
             </div>
             
-            <!-- Overlay 2D elementów -->
+            <!-- Overlay wskaźników -->
             <div class="office-overlay">
-                <!-- Wskaźniki -->
                 <div class="overlay-clock">
                     <div class="digital-clock">12:00 AM</div>
                     <div class="night-counter">NOC 1</div>
@@ -865,38 +607,34 @@
             <div class="camera-monitor">
                 <div class="monitor-frame">
                     <div class="monitor-screen" id="camera-screen">
-                        <!-- Camera feed będzie dynamicznie ładowany -->
                         <div class="camera-static-overlay"></div>
                         <div class="camera-feed" id="active-camera-feed">
-                            <div class="camera-room">
-                                <!-- Sala będzie renderowana dynamicznie -->
+                            <div class="camera-room" id="camera-room-display">
+                                <!-- Pomieszczenie będzie renderowane dynamicznie -->
                             </div>
                         </div>
                         <div class="camera-hud">
                             <div class="camera-info">
-                                <div class="camera-name">KAMERA 1: SCENA GŁÓWNA</div>
-                                <div class="camera-time">--:-- --</div>
+                                <div class="camera-name" id="camera-name-display">KAMERA 1: SCENA GŁÓWNA</div>
+                                <div class="camera-time" id="camera-time-display">--:-- --</div>
                             </div>
                             <div class="camera-status">
                                 <div class="status-indicator active"></div>
-                                <span>AKTYWNA</span>
+                                <span id="camera-status-text">AKTYWNA</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="monitor-controls">
                         <div class="control-buttons">
-                            <button class="monitor-btn" data-action="prev-cam">
+                            <button class="monitor-btn" id="prev-cam-btn" title="Poprzednia kamera">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
-                            <button class="monitor-btn" data-action="next-cam">
+                            <button class="monitor-btn" id="next-cam-btn" title="Następna kamera">
                                 <i class="fas fa-chevron-right"></i>
                             </button>
-                            <button class="monitor-btn" data-action="toggle-static">
+                            <button class="monitor-btn" id="toggle-static-btn" title="Przełącz szum">
                                 <i class="fas fa-signal"></i>
-                            </button>
-                            <button class="monitor-btn" data-action="zoom">
-                                <i class="fas fa-search"></i>
                             </button>
                         </div>
                     </div>
@@ -906,27 +644,26 @@
                     <div class="panel-header">
                         <h4><i class="fas fa-th"></i> SIATKA KAMER</h4>
                         <div class="panel-stats">
-                            <span class="stat"><i class="fas fa-video"></i> 12/12</span>
-                            <span class="stat"><i class="fas fa-bolt"></i> <span id="cam-power">ON</span></span>
+                            <span class="stat"><i class="fas fa-video"></i> <span id="active-cam-count">1</span>/12</span>
                         </div>
                     </div>
                     
-                    <div class="camera-grid">
+                    <div class="camera-grid" id="camera-grid-container">
                         <!-- Siatka kamer będzie generowana dynamicznie -->
                     </div>
                     
                     <div class="panel-footer">
                         <div class="camera-tips">
                             <i class="fas fa-keyboard"></i>
-                            <span>Użyj klawiszy 1-0 dla szybkiego przełączania</span>
+                            <span>Użyj klawiszy 1-9 lub kliknij kamerę</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- HUD -->
-        <div id="game-hud">
+        <!-- HUD - różne tryby -->
+        <div id="game-hud" class="hud-mode-classic hud-size-medium">
             <div class="hud-top">
                 <div class="hud-left">
                     <div class="resource-display">
@@ -936,10 +673,10 @@
                             </div>
                             <div class="resource-info">
                                 <div class="resource-label">ENERGIA</div>
-                                <div class="resource-value">100%</div>
+                                <div class="resource-value" id="hud-power">100%</div>
                             </div>
                             <div class="resource-bar">
-                                <div class="bar-fill power"></div>
+                                <div class="bar-fill power" id="power-bar-fill"></div>
                             </div>
                         </div>
                         
@@ -949,7 +686,7 @@
                             </div>
                             <div class="resource-info">
                                 <div class="resource-label">CZAS</div>
-                                <div class="resource-value">12:00 AM</div>
+                                <div class="resource-value" id="hud-time">12:00 AM</div>
                             </div>
                         </div>
                     </div>
@@ -962,7 +699,7 @@
                         </div>
                         <div class="night-info">
                             <div class="night-label">NOC</div>
-                            <div class="night-number">1</div>
+                            <div class="night-number" id="hud-night">1</div>
                         </div>
                     </div>
                     
@@ -972,14 +709,14 @@
                         </div>
                         <div class="threat-info">
                             <div class="threat-label">AKTYWNE</div>
-                            <div class="threat-count">0</div>
+                            <div class="threat-count" id="hud-active">0</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="hud-right">
                     <div class="action-buttons">
-                        <button class="hud-action-btn" id="hud-cameras" data-action="cameras">
+                        <button class="hud-action-btn" id="hud-cameras" title="Kamery (C)">
                             <div class="action-icon">
                                 <i class="fas fa-video"></i>
                             </div>
@@ -987,7 +724,7 @@
                             <div class="action-hotkey">C</div>
                         </button>
                         
-                        <button class="hud-action-btn" id="hud-left-light" data-action="leftLight">
+                        <button class="hud-action-btn" id="hud-left-light" title="Światło lewe (Q)">
                             <div class="action-icon">
                                 <i class="fas fa-lightbulb"></i>
                             </div>
@@ -995,7 +732,7 @@
                             <div class="action-hotkey">Q</div>
                         </button>
                         
-                        <button class="hud-action-btn" id="hud-right-light" data-action="rightLight">
+                        <button class="hud-action-btn" id="hud-right-light" title="Światło prawe (E)">
                             <div class="action-icon">
                                 <i class="fas fa-lightbulb"></i>
                             </div>
@@ -1003,7 +740,7 @@
                             <div class="action-hotkey">E</div>
                         </button>
                         
-                        <button class="hud-action-btn" id="hud-map" data-action="map">
+                        <button class="hud-action-btn" id="hud-map" title="Mapa (M)">
                             <div class="action-icon">
                                 <i class="fas fa-map"></i>
                             </div>
@@ -1018,40 +755,40 @@
                 <div class="door-controls">
                     <div class="door-control left-door-control">
                         <div class="door-status">
-                            <div class="status-light"></div>
+                            <div class="status-light" id="left-door-status-light"></div>
                             <div class="status-label">DRZWI LEWE</div>
-                            <div class="status-value">OTWARTE</div>
+                            <div class="status-value" id="left-door-status-text">OTWARTE</div>
                         </div>
-                        <button class="door-btn" data-door="left">
+                        <button class="door-btn" id="hud-left-door" title="Zamknij/otwórz lewe drzwi (L)">
                             <div class="btn-icon">
                                 <i class="fas fa-door-closed"></i>
                             </div>
-                            <div class="btn-label">ZAMKNIJ/OTWÓRZ</div>
+                            <div class="btn-label">DRZWI LEWE</div>
                             <div class="btn-hotkey">L</div>
                         </button>
                     </div>
                     
                     <div class="buzzer-control">
-                        <button class="buzzer-btn" id="hud-buzzer">
+                        <button class="buzzer-btn" id="hud-buzzer" title="Dźwięk ostrzegawczy (Spacja)">
                             <div class="buzzer-icon">
                                 <i class="fas fa-bell"></i>
                             </div>
-                            <div class="buzzer-label">DŹWIĘK OSTRZEG.</div>
+                            <div class="buzzer-label">DŹWIĘK</div>
                             <div class="buzzer-hotkey">SPACJA</div>
                         </button>
                     </div>
                     
                     <div class="door-control right-door-control">
                         <div class="door-status">
-                            <div class="status-light"></div>
+                            <div class="status-light" id="right-door-status-light"></div>
                             <div class="status-label">DRZWI PRAWE</div>
-                            <div class="status-value">OTWARTE</div>
+                            <div class="status-value" id="right-door-status-text">OTWARTE</div>
                         </div>
-                        <button class="door-btn" data-door="right">
+                        <button class="door-btn" id="hud-right-door" title="Zamknij/otwórz prawe drzwi (R)">
                             <div class="btn-icon">
                                 <i class="fas fa-door-closed"></i>
                             </div>
-                            <div class="btn-label">ZAMKNIJ/OTWÓRZ</div>
+                            <div class="btn-label">DRZWI PRAWE</div>
                             <div class="btn-hotkey">R</div>
                         </button>
                     </div>
@@ -1064,18 +801,18 @@
                     </div>
                     
                     <div class="hud-actions">
-                        <button class="hud-small-btn" id="hud-pause" data-action="pause">
+                        <button class="hud-small-btn" id="hud-pause" title="Pauza (P)">
                             <i class="fas fa-pause"></i>
                             <span>PAUZA</span>
                             <span class="small-hotkey">P</span>
                         </button>
                         
-                        <button class="hud-small-btn" id="hud-settings" data-action="settings">
+                        <button class="hud-small-btn" id="hud-settings" title="Ustawienia">
                             <i class="fas fa-cog"></i>
                             <span>USTAWIENIA</span>
                         </button>
                         
-                        <button class="hud-small-btn" id="hud-quit" data-action="quit">
+                        <button class="hud-small-btn" id="hud-quit" title="Wyjście">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>WYJŚCIE</span>
                         </button>
@@ -1102,10 +839,10 @@
         <div id="jumpscare-screen">
             <div class="jumpscare-content">
                 <div class="jumpscare-model" id="jumpscare-model">
-                    <!-- 3D model animatronika będzie tu ładowany -->
+                    <div class="jumpscare-icon" id="jumpscare-icon">⚡</div>
                 </div>
                 <div class="jumpscare-text">
-                    <h1 class="jumpscare-name">BOLT BEAR</h1>
+                    <h1 class="jumpscare-name" id="jumpscare-name">BOLT BEAR</h1>
                     <h2 class="jumpscare-message">GAME OVER</h2>
                 </div>
                 <div class="jumpscare-sound">
@@ -1147,26 +884,6 @@
                             <div class="stat-value"><span id="stat-energy">45</span>%</div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-label">ODEPRZYTE ATAKI</div>
-                            <div class="stat-value"><span id="stat-attacks">3</span></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-label">NAJSZYBSZY CZAS</div>
-                            <div class="stat-value"><span id="stat-time">5:30</span> AM</div>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="complete-summary">
@@ -1187,51 +904,7 @@
                         <i class="fas fa-home"></i>
                         <span class="btn-text">MENU GŁÓWNE</span>
                     </button>
-                    
-                    <button class="menu-btn" id="complete-extras-btn">
-                        <i class="fas fa-star"></i>
-                        <span class="btn-text">DODATKI</span>
-                    </button>
                 </div>
-                
-                <div class="complete-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 20%"></div>
-                    </div>
-                    <div class="progress-label">
-                        POSTĘP GRY: <span>20%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ekran gry - FNUF 2 -->
-    <div id="game-screen-fnuf2" class="screen game-screen">
-        <!-- Podobna struktura jak FNUF 1 ale z dodatkowymi elementami -->
-        <div class="fnuf2-notice">
-            <div class="notice-content">
-                <h2><i class="fas fa-construction"></i> FNUF 2 W BUDOWIE</h2>
-                <p>Ta część gry jest obecnie w rozwoju.</p>
-                <p>Wróć do menu i wybierz FNUF 1 aby zagrać.</p>
-                <button class="menu-btn" id="fnuf2-back">
-                    <i class="fas fa-arrow-left"></i> POWRÓT DO MENU
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ekran gry - FNUF 3 -->
-    <div id="game-screen-fnuf3" class="screen game-screen">
-        <!-- Podobna struktura jak FNUF 1 ale z dodatkowymi elementami -->
-        <div class="fnuf3-notice">
-            <div class="notice-content">
-                <h2><i class="fas fa-construction"></i> FNUF 3 W BUDOWIE</h2>
-                <p>Ta część gry jest obecnie w rozwoju.</p>
-                <p>Wróć do menu i wybierz FNUF 1 aby zagrać.</p>
-                <button class="menu-btn" id="fnuf3-back">
-                    <i class="fas fa-arrow-left"></i> POWRÓT DO MENU
-                </button>
             </div>
         </div>
     </div>
@@ -1263,123 +936,11 @@
                         <i class="fas fa-play"></i> GRAJ
                     </button>
                 </div>
-                
-                <div class="minigame-card" data-game="memoryMatch">
-                    <div class="minigame-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <div class="minigame-info">
-                        <h3>PAMIĘĆ ANIMATRONIKÓW</h3>
-                        <p>Znajdź pary animatroników zanim czas się skończy</p>
-                        <div class="minigame-stats">
-                            <span class="stat"><i class="fas fa-star"></i> WYMAGANA 2 NOC</span>
-                            <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
-                        </div>
-                    </div>
-                    <button class="play-minigame-btn" data-game="memoryMatch">
-                        <i class="fas fa-play"></i> GRAJ
-                    </button>
-                </div>
-                
-                <div class="minigame-card" data-game="cameraHack">
-                    <div class="minigame-icon">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <div class="minigame-info">
-                        <h3>HAKOWANIE KAMER</h3>
-                        <p>Przełączaj kamery aby śledzić uciekające animatroniki</p>
-                        <div class="minigame-stats">
-                            <span class="stat"><i class="fas fa-star"></i> WYMAGANA 3 NOC</span>
-                            <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
-                        </div>
-                    </div>
-                    <button class="play-minigame-btn" data-game="cameraHack">
-                        <i class="fas fa-play"></i> GRAJ
-                    </button>
-                </div>
-                
-                <div class="minigame-card" data-game="powerGrid">
-                    <div class="minigame-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div class="minigame-info">
-                        <h3>SIECĆ ENERGII</h3>
-                        <p>Połącz kable aby przywrócić zasilanie</p>
-                        <div class="minigame-stats">
-                            <span class="stat"><i class="fas fa-star"></i> WYMAGANA 4 NOC</span>
-                            <span class="stat"><i class="fas fa-trophy"></i> WYNIK: 0</span>
-                        </div>
-                    </div>
-                    <button class="play-minigame-btn" data-game="powerGrid">
-                        <i class="fas fa-play"></i> GRAJ
-                    </button>
-                </div>
-            </div>
-            
-            <div class="minigames-footer">
-                <div class="minigame-hint">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Odblokuj minigry poprzez ukończenie nocy w głównej grze</span>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- Canvas dla minigier 3D -->
-    <div id="minigame-canvas-container" class="screen">
-        <div class="minigame-header">
-            <div class="minigame-title" id="minigame-title">MINIGRA</div>
-            <div class="minigame-stats">
-                <div class="minigame-stat">
-                    <span class="stat-label">WYNIK:</span>
-                    <span class="stat-value" id="mg-score">0</span>
-                </div>
-                <div class="minigame-stat">
-                    <span class="stat-label">CZAS:</span>
-                    <span class="stat-value" id="mg-time">60</span>
-                </div>
-                <div class="minigame-stat">
-                    <span class="stat-label">POZIOM:</span>
-                    <span class="stat-value" id="mg-level">1</span>
-                </div>
-            </div>
-            <button class="minigame-close-btn" id="minigame-close">
-                <i class="fas fa-times"></i> WYJŚCIE
-            </button>
-        </div>
-        
-        <div class="minigame-content">
-            <canvas id="minigame-3d-canvas"></canvas>
-            
-            <div class="minigame-controls">
-                <div class="controls-info">
-                    <div class="control-item">
-                        <span class="control-key" id="control-left">←</span>
-                        <span class="control-desc">PORUSZANIE W LEWO</span>
-                    </div>
-                    <div class="control-item">
-                        <span class="control-key" id="control-right">→</span>
-                        <span class="control-desc">PORUSZANIE W PRAWO</span>
-                    </div>
-                    <div class="control-item">
-                        <span class="control-key" id="control-action">SPACJA</span>
-                        <span class="control-desc">AKCJA</span>
-                    </div>
-                </div>
-                
-                <button class="menu-btn" id="minigame-pause">
-                    <i class="fas fa-pause"></i> PAUZA
-                </button>
-            </div>
-        </div>
-        
-        <div class="minigame-instructions" id="minigame-instructions">
-            <h3><i class="fas fa-info-circle"></i> INSTRUKCJA</h3>
-            <p id="minigame-desc">Używaj klawiszy strzałek do poruszania i spacji do akcji.</p>
-        </div>
-    </div>
-
-    <!-- Credits Screen -->
+    <!-- Ekran twórców -->
     <div id="credits-screen" class="screen">
         <div class="credits-container">
             <div class="credits-header">
@@ -1391,100 +952,57 @@
             
             <div class="credits-content">
                 <div class="credits-section">
-                    <h3><i class="fas fa-code"></i> PROGRAMOWANIE</h3>
+                    <h3><i class="fas fa-code"></i> PROGRAMOWANIE I DESIGN</h3>
                     <div class="credits-list">
+                        <div class="credit-item">
+                            <div class="credit-name">STUDIO</div>
+                            <div class="credit-person">MNGame Studio</div>
+                        </div>
                         <div class="credit-item">
                             <div class="credit-name">GŁÓWNY PROGRAMISTA</div>
-                            <div class="credit-person">Ultimate Fear Studio</div>
+                            <div class="credit-person">Marek Narty (Marcus Schie)</div>
                         </div>
                         <div class="credit-item">
-                            <div class="credit-name">SYSTEM 3D</div>
-                            <div class="credit-person">WebGL Engine Team</div>
-                        </div>
-                        <div class="credit-item">
-                            <div class="credit-name">AI ANIMATRONIKÓW</div>
-                            <div class="credit-person">Neural Network Division</div>
+                            <div class="credit-name">PROJEKT GRY</div>
+                            <div class="credit-person">Zespół MNGame</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="credits-section">
-                    <h3><i class="fas fa-paint-brush"></i> GRAFIKA I DESIGN</h3>
-                    <div class="credits-list">
-                        <div class="credit-item">
-                            <div class="credit-name">MODELE 3D</div>
-                            <div class="credit-person">Polygon Workshop</div>
-                        </div>
-                        <div class="credit-item">
-                            <div class="credit-name">TEKSTURY I ŚRODOWISKA</div>
-                            <div class="credit-person">Texture Masters</div>
-                        </div>
-                        <div class="credit-item">
-                            <div class="credit-name">EFFEKTY WIZUALNE</div>
-                            <div class="credit-person">FX Department</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="credits-section">
-                    <h3><i class="fas fa-volume-up"></i> DŹWIĘK I MUZYKA</h3>
-                    <div class="credits-list">
-                        <div class="credit-item">
-                            <div class="credit-name">ŚCIEŻKA DŹWIĘKOWA</div>
-                            <div class="credit-person">Horror Sound Labs</div>
-                        </div>
-                        <div class="credit-item">
-                            <div class="credit-name">EFEKTY DŹWIĘKOWE</div>
-                            <div class="credit-person">Foley Artists United</div>
-                        </div>
-                        <div class="credit-item">
-                            <div class="credit-name">JUMPSCARE AUDIO</div>
-                            <div class="credit-person">Scream Recording Studio</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="credits-section">
-                    <h3><i class="fas fa-lightbulb"></i> SPECJALNE PODZIĘKOWANIA</h3>
+                    <h3><i class="fas fa-lightbulb"></i> INSPIRACJE I PODZIĘKOWANIA</h3>
                     <div class="thanks-list">
-                        <p>Dziękujemy wszystkim testerom gry za ich cenne uwagi i pomoc w rozwoju FNUF.</p>
-                        <p>Specjalne podziękowania dla społeczności horroru indie za inspirację.</p>
+                        <p>Gra FNUF (Five Nights at Ultimate Fear) jest dziełem fanowskim inspirowanym serią <strong>Five Nights at Freddy's</strong> stworzoną przez <strong>Scotta Cawthona</strong>.</p>
+                        <p>Dziękujemy Scottowi Cawthonowi za stworzenie niesamowitego uniwersum, które zainspirowało nas do stworzenia tej gry.</p>
+                        <p>Specjalne podziękowania dla społeczności FNAF za ciągłe wsparcie i inspirację.</p>
+                    </div>
+                </div>
+                
+                <div class="credits-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> INFORMACJE PRAWNE</h3>
+                    <div class="legal-info">
+                        <p>FNUF (Five Nights at Ultimate Fear) jest nieoficjalną grą fanowską stworzoną przez fanów dla fanów.</p>
+                        <p>Five Nights at Freddy's jest zastrzeżonym znakiem towarowym Scotta Cawthona. Ta gra nie jest powiązana z Scottem Cawthonem ani z serią Five Nights at Freddy's.</p>
+                        <p>Gra jest tworzona wyłącznie w celach edukacyjnych i rozrywkowych, bez intencji czerpania zysków.</p>
                     </div>
                 </div>
                 
                 <div class="credits-footer">
                     <div class="studio-logo">
-                        <span class="logo-text">ULTIMATE FEAR STUDIO</span>
+                        <span class="logo-text">MNGAME STUDIO</span>
                         <span class="logo-year">© 2023</span>
                     </div>
                     <div class="game-version">
-                        FNUF COLLECTION v1.0 | Build 2023.12.09
+                        FNUF: ULTIMATE FEAR COLLECTION v1.0
+                    </div>
+                    <div class="inspiration-note">
+                        Inspirowane dziełem Scotta Cawthona
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Audio Elements -->
-    <audio id="ambient-sound" loop>
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-ambient-horror-voice-482.mp3" type="audio/mpeg">
-    </audio>
-    
-    <audio id="camera-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-camera-shutter-click-1133.mp3" type="audio/mpeg">
-    </audio>
-    
-    <audio id="door-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-heavy-metal-door-close-1032.mp3" type="audio/mpeg">
-    </audio>
-    
-    <audio id="jumpscare-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-horror-scream-388.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
